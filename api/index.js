@@ -3,8 +3,23 @@ const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-app.use(bodyParser.json());
+const taskRoute = require('./routes/task.routes');
 
-app.listen(3000,()=>{
-    console.log('App is listening');
+require('dotenv').config();
+
+//Setup middlewares
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/task",taskRoute);
+
+let options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true 
+};
+
+mongoose.connect(process.env.db_url,options,()=>{
+    app.listen(process.env.port,()=>{
+        console.log('App is listening');
+    });
 });

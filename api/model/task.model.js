@@ -3,10 +3,10 @@ const Schema = mongoose.Schema;
 
 let taskSchema = new Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  status: String,
+  name: String,
   description: String,
-  name: {type: String, enum: ['In Progress', 'Done', 'Completed']},
-  dependentTask: [taskSchema],
+  status: {type: String, enum: ['In Progress', 'Done', 'Completed']},
+  dependentTask: [this],
   parentTask: mongoose.Schema.Types.ObjectId
 });
 
@@ -53,6 +53,12 @@ taskSchema.statics.updateTask = function(task){
         .catch((err)=>{
             reject(err);
         });
+    });
+}
+
+taskSchema.statics.deleteTask = function(task){
+    return new Promise((resolve,reject)=>{
+        
     });
 }
 

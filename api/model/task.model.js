@@ -5,61 +5,115 @@ let taskSchema = new Schema({
   _id: mongoose.Schema.Types.ObjectId,
   name: String,
   description: String,
-  status: {type: String, enum: ['In Progress', 'Done', 'Completed']},
-  dependentTask: [this],
-  parentTask: mongoose.Schema.Types.ObjectId
+  status: { type: String, enum: ["In Progress", "Done", "Completed"] },
+  ancestors: [],
+  parent: mongoose.Schema.Types.ObjectId,
 });
 
-taskSchema.statics.createTask = function(task){
-    return new Promise((resolve,reject)=>{
+taskSchema.statics.createTask = function(task) {
+  return new Promise((resolve, reject) => {
+
+
     
-        let doc = new this({
-            _id: task._id,
-            name: task.name,
-            status: task.status,
-            description: task.description
-        });
-        
-        doc.save()
-        .then((result)=>{
-            resolve(result);
-        })
-        .catch((err)=>{
-            reject(err);
-        });
+    let doc = new this({
+      _id: task._id,
+      name: task.name,
+      status: task.status,
+      description: task.description
     });
-}
 
-taskSchema.statics.updateTask = function(task){
-    return new Promise((resolve,reject)=>{
-        this.model("Task").findOne({
-            _id: task._id
-        })
-        .then((result)=>{
+    doc
+    .save()
+    .then(result => {
+    resolve(result);
+    })
+    .catch(err => {
+    reject(err);
+    });
+  });
+};
 
-            Object.keys(task).forEach(element => {
-                result[element] = task[element];
+taskSchema.statics.createTaskWithParent = function(task) {
+  return new Promise((resolve, reject) => {
+      
+    let doc = new this({
+        _id: task._id,
+        name: task.name,
+        status: task.status,
+        description: task.description,
+        parent: task.parent,
+        ancestors: task.ancestors
+    });
+
+    let ancestors = doc.ancestors;
+
+    //Needs optimization for querying
+    doc
+    .save()
+    .then(createResult => {
+
+        this.model("Task").aggregate([
+            {$match: {_id: {$in: ancestors}}},
+            {$set: {"status":"In Progress"}}
+        ])
+        .exec((err,ancestorResult)=>{
+            if(err){
+                throw err;
+            }
+
+            resolve({
+                ancestorResult,
+                createResult
             });
-
-            result.save()
-            .then((newResult)=>{
-                resolve(newResult);
-            })
-            .catch((err)=>{
-                reject(err);
-            });
-
         })
-        .catch((err)=>{
-            reject(err);
-        });
-    });
-}
 
-taskSchema.statics.deleteTask = function(task){
-    return new Promise((resolve,reject)=>{
-        
+    })
+    .catch(err => {
+        reject(err);
     });
-}
+
+  });
+};
+
+taskSchema.statics.updateTask = function(task) {
+  return new Promise((resolve, reject) => {
+    this.model("Task")
+      .findOne({
+        _id: task._id
+      })
+      .then(result => {
+        Object.keys(task).forEach(element => {
+          result[element] = task[element];
+        });
+
+        result
+          .save()
+          .then(newResult => {
+            resolve(newResult);
+          })
+          .catch(err => {
+            reject(err);
+          });
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+};
+
+taskSchema.statics.deleteTask = function(task) {
+  return new Promise((resolve, reject) => {
+    this.model("Task")
+      .deleteOne({
+        _id: task._id
+      })
+      .then(result => {
+        resolve(result);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+};
 
 module.exports = mongoose.models.Task || mongoose.model("Task", taskSchema);

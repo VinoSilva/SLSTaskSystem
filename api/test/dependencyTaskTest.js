@@ -15,7 +15,7 @@ describe("Dependency task function", () => {
         _id: new mongoose.Types.ObjectId(),
         name: "Zelda animation",
         description: "Zelda running animation",
-        status: "Completed"
+        status: "In Progress"
     };
 
     Task.createTask(doc)
@@ -67,9 +67,6 @@ describe("Dependency task function", () => {
     Task.createTaskWithParent(taskDoc)
     .then(result=>{
 
-        console.log(JSON.stringify(result));
-        
-
         result.should.not.equal(undefined);
         result.should.be.a("object");
 
@@ -108,7 +105,6 @@ describe("Dependency task function", () => {
         result.should.have.property('ancestorResult');
         result.ancestorResult.should.not.be.equal(undefined);
         result.ancestorResult.should.be.a("array");
-
         result.ancestorResult.should.have.length(1);
 
         result.ancestorResult[0].should.have.property("_id");
@@ -132,7 +128,7 @@ describe("Dependency task function", () => {
         result.ancestorResult[0].ancestors.should.have.length(0);
 
 
-        this.childTask = result.createdResult;
+        this.childTask = result.createResult;
 
         done();
     })
@@ -141,20 +137,6 @@ describe("Dependency task function", () => {
     });
 
   });
-
-  it("It should update a dependent task and update the parent task", function(done) {
-    
-    //Update the child task to In Progress
-    //Aggregate
-    //Check if status is passed or not
-    //If yes then update parent tasks
-
-    done();
-  });
-
-//   it("It should delete a dependent task and update the parent task", function(done) {
-//     done();
-//   });
 
   after(function(done) {
     this.dropDatabase(done);

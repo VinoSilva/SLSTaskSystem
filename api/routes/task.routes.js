@@ -5,6 +5,6 @@ const router = express.Router();
 const userController = require('../controller/task.controller');
 
 router.post('/',userController.createTask);
-router.patch('/logout',userController.updateTasks);
+// router.patch('/logout',userController.updateTasks);
 
 module.exports = router;

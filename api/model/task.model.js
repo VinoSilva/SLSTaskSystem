@@ -77,29 +77,30 @@ taskSchema.statics.createTaskWithParent = function(task) {
 
 taskSchema.statics.updateTask = function(task) {
   return new Promise((resolve, reject) => {
+
+    //Find the model and update it
     this.model("Task")
       .findOne({
         _id: task._id
       })
       .then(result => {
-        Object.keys(task).forEach(element => {
-          result[element] = task[element];
-        });
 
-        result
-          .save()
+          Object.keys(task).forEach(element => {
+              result[element] = task[element];
+          });
+
+          result.save()
           .then(newResult => {
-            resolve(newResult);
+          resolve(newResult);
           })
           .catch(err => {
-            reject(err);
+          reject(err);
+          })
+          .catch(err => {
+              reject(err);
           });
-      })
-      .catch(err => {
-        reject(err);
       });
-  });
-};
+})};
 
 taskSchema.statics.deleteTask = function(task) {
   return new Promise((resolve, reject) => {

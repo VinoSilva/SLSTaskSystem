@@ -6,14 +6,14 @@ import { shallow } from 'enzyme';
 
 import renderer from 'react-test-renderer';
 
-// it('renders without crashing', () => {
-//   const div = document.createElement('div');
-//   ReactDOM.render(<App />, div);
-//   ReactDOM.unmountComponentAtNode(div);
-// });
-
 
 describe('App component', () => {
+  
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+    ReactDOM.render(<App />, div);
+    ReactDOM.unmountComponentAtNode(div);
+  });
   
   it('renders hello world', () => {
     const wrapper = shallow(<App />);

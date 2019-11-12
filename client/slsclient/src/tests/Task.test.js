@@ -47,4 +47,17 @@ describe("Task component", () => {
     expect(addTaskBtn).toBeTruthy();
     expect(addTaskBtn.type()).toBe("button");
   });
+
+  it('Task Component should have a button with id "addTaskBtn"', () => {
+    const wrapper = mount(<Provider store = {store}><Task /></Provider>);
+
+    const addTaskBtn = wrapper.find("#addTaskBtn");
+    addTaskBtn.simulate('click');
+
+    const addTaskForm = wrapper.find('#addTaskForm');
+
+    expect(addTaskForm).toBeTruthy();
+
+    expect(addTaskForm.type()).toBe("div");
+  });
 });

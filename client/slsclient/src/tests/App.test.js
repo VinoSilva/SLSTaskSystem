@@ -6,7 +6,6 @@ import { shallow } from 'enzyme';
 
 import renderer from 'react-test-renderer';
 
-
 describe('App component', () => {
   
   it('renders without crashing', () => {
@@ -15,16 +14,17 @@ describe('App component', () => {
     ReactDOM.unmountComponentAtNode(div);
   });
   
-  it('renders hello world', () => {
-    const wrapper = shallow(<App />);
-    const text = wrapper.find('h1').text();
-    expect(text).toEqual('Hello World');
+  // it('renders hello world', () => {
+  //   const wrapper = shallow(<App />);
+  //   const text = wrapper.find('h1').text();
+  //   expect(text).toEqual('Hello World');
 
-  });
+  // });
 
   it('App matches the snapshot',()=>{
-    const tree = renderer.create(<App />).toJSON();
+    // const tree = renderer.create(<App />).toJSON();
+    const wrapper = shallow(<App />);
 
-    expect(tree).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

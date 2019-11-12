@@ -5,7 +5,7 @@ import {
 } from '../actions/taskAction';
 
 const initialState = {
-
+    
 };
 
 export default function taskReducer(state = initialState,action){

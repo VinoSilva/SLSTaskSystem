@@ -1,11 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`App component App matches the snapshot 1`] = `
-<div
-  className="App"
->
-  <h1>
-    Hello World
-  </h1>
-</div>
-`;
+exports[`App component App matches the snapshot 1`] = `ShallowWrapper {}`;

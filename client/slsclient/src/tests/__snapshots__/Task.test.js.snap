@@ -1,3 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Task component Task matches the snapshot 1`] = `<div />`;
+exports[`Task component Task matches the snapshot 1`] = `
+Array [
+  " ",
+  <div>
+    <h1
+      id="taskHeader"
+    >
+      Task List
+    </h1>
+    <div
+      id="taskList"
+    />
+    <div />
+    <button
+      className="btn btn-success"
+      id="addTaskBtn"
+      onClick={[Function]}
+    >
+      Add Form
+    </button>
+  </div>,
+  " ",
+]
+`;

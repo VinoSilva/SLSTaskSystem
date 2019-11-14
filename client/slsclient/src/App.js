@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 
 import rootReducer from './reducers/rootReducer'; 
 
-import Task from './Components/Task';
+import Home from './Components/Home';
 
 const store = createStore(rootReducer,applyMiddleware(thunk));
 
@@ -17,7 +17,7 @@ function App() {
   return (
     <Provider store={store}>
       <div className="App">
-        <Task />
+        <Home />
       </div>
     </Provider>
   );

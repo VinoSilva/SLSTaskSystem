@@ -46,6 +46,7 @@ export class Task extends Component {
     return <div></div>;
   }
 
+
   render() {
     return (
       <div>
@@ -55,7 +56,7 @@ export class Task extends Component {
         {this.renderAddTaskForm()}
 
         <button
-          className="btn btn-success"
+          className="btn btn-info"
           id="addTaskBtn"
           onClick={this.onClickAddTask}
         >

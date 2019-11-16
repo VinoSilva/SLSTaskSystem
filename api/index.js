@@ -18,7 +18,7 @@ let options = {
     useUnifiedTopology: true 
 };
 
-mongoose.connect(process.env.db_url,options,()=>{
+mongoose.connect(process.env.test_url,options,()=>{
     app.listen(process.env.port,()=>{
         console.log('App is listening');
     });

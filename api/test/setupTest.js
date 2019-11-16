@@ -3,23 +3,36 @@ const mongoose = require("mongoose");
 
 require("dotenv").config();
 
-let dropDatabase = function(done) {
+let dropDatabase = function(done,callback) {
 
-  let dropAfterTest = false;
+  let dropAfterTest = true;
 
   if(dropAfterTest)
   {
     mongoose.connection.db
       .dropDatabase()
       .then(() => {
-        done();
+        if(callback){
+
+          callback();
+        }
+        else{
+          done();
+        }
       })
       .catch(err => {
         console.error(err);
   
         if (err.code === 26) {
           console.log("Ignore error mongoose 26");
-          done();
+
+          if(callback){
+            callback();
+          }
+          else{
+            done();
+          }
+
         } else {
           throw err;
         }
@@ -27,7 +40,13 @@ let dropDatabase = function(done) {
   }
   else{
     //Don't drop the database
-    done();
+
+    if(callback){
+      callback();
+    }
+    else{
+      done();
+    }
   }
 };
 

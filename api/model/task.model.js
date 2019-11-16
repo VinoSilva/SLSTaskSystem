@@ -138,4 +138,39 @@ taskSchema.statics.getTask = function(task){
   });
 }
 
+taskSchema.statics.getTasks = function(body){
+  return new Promise((resolve,reject)=>{
+
+    this.model("Task")
+    .aggregate([
+        { $project: {name: 1,description: 1,_id: 1}},
+        { $skip: (body.skip*body.limit) },
+        { $limit: body.limit}
+    ])
+    .exec((err,res)=>{
+
+        if(err){
+            throw err;
+        }
+
+        this.model("Task").countDocuments({
+
+        })
+        .then((result)=>{
+
+            resolve({
+              count: result,
+              tasks: res
+            });
+            
+        })
+        .catch((err)=>{
+            console.log(err);
+            reject(err);
+        })
+
+    });
+  });
+}
+
 module.exports = mongoose.models.Task || mongoose.model("Task", taskSchema);

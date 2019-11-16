@@ -92,6 +92,26 @@ exports.getTask = function(req,res){
     })
 };
 
-exports.getTasksByPage = function(req,res){
+exports.getTasks = function(req,res){
 
+
+
+    Task.getTasks(req.body)
+    .then((result)=>{
+
+        return res.status(200).json({
+            count: result.count,
+            success: "Success",
+            tasks: result.tasks,
+            tasksPerPage: 20, //Use config to find out about this
+            currentPage: req.body.skip
+        });
+    })
+    .catch((err)=>{
+        console.log(err);
+        
+        return res.status(404).json({
+            fail: "Fail"
+        })
+    })
 };

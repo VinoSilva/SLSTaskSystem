@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { showAddTask, hideAddTask } from "../actions/taskAddAction";
 
 import TaskForm from "./TaskForm";
+import TaskCard from "./TaskCard";
 
 function mapStateToProps(state) {
   return {
@@ -20,6 +21,9 @@ function mapStateToProps(state) {
 // })
 
 export class Task extends Component {
+
+
+
   constructor(props) {
     super(props);
 
@@ -45,6 +49,7 @@ export class Task extends Component {
   }
 
   render() {
+
     return (
       <div>
         <h1 className="list-inline-item" id="taskHeader">
@@ -61,6 +66,21 @@ export class Task extends Component {
         <div id="taskList"></div>
 
         {this.renderAddTaskForm()}
+
+        <div class = "row">
+          {/* <TaskCard />
+          <TaskCard />
+          <TaskCard />
+          <TaskCard />
+          <TaskCard />
+          <TaskCard />
+          <TaskCard />
+          <TaskCard />
+          <TaskCard />
+          <TaskCard />
+          <TaskCard />
+          <TaskCard /> */}
+        </div>
       </div>
     );
   }

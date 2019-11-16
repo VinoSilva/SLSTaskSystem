@@ -16,7 +16,7 @@ taskSchema.statics.createTask = function(task) {
   return new Promise((resolve, reject) => {
 
     let doc = new this({
-      _id: task._id,
+      _id: new mongoose.Types.ObjectId(),
       name: task.name,
       status: task.status,
       description: task.description
@@ -37,7 +37,7 @@ taskSchema.statics.createTaskWithParent = function(task) {
   return new Promise((resolve, reject) => {
       
     let doc = new this({
-        _id: task._id,
+        _id: new mongoose.Types.ObjectId(),
         name: task.name,
         status: task.status,
         description: task.description,
@@ -77,15 +77,12 @@ taskSchema.statics.createTaskWithParent = function(task) {
 
 taskSchema.statics.updateTask = function(task) {
 
-  console.log(JSON.stringify(task));
-  
-  
-  this.model("Task").aggregate([
-    {$match: {_id: {$in: task.ancestors}}},
-  ])
-  .exec((err,result)=>{
-    console.log(result);
-  })
+  // this.model("Task").aggregate([
+  //   {$match: {_id: {$in: task.ancestors}}},
+  // ])
+  // .exec((err,result)=>{
+  //   console.log(result);
+  // })
 
   return new Promise((resolve, reject) => {
     
@@ -127,5 +124,18 @@ taskSchema.statics.deleteTask = function(task) {
       });
   });
 };
+
+taskSchema.statics.getTask = function(task){
+  return new Promise((resolve,reject)=>{
+    this.model("Task")
+    .findOne({_id: task._id})
+    .then((result)=>{
+      resolve(result);
+    })
+    .catch((err)=>{
+      console.log(err);
+    })
+  });
+}
 
 module.exports = mongoose.models.Task || mongoose.model("Task", taskSchema);

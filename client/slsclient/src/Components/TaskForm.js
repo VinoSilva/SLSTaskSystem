@@ -93,7 +93,7 @@ export class TaskForm extends Component {
     render() {
         return (
             <div id="addTaskForm" className="form-group">
-
+                    
                 <div className="panel panel-default">
                      <FormErrors formErrors={this.state.formErrors} />
                 </div> 

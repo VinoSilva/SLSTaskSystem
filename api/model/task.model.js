@@ -8,13 +8,13 @@ let taskSchema = new Schema({
   status: { type: String, enum: ["In Progress", "Done", "Completed"] },
   ancestors: [],
   parent: mongoose.Schema.Types.ObjectId,
+  created_at: Date,
+  updated_at: Date
 });
 
 taskSchema.statics.createTask = function(task) {
   return new Promise((resolve, reject) => {
 
-
-    
     let doc = new this({
       _id: task._id,
       name: task.name,
@@ -65,7 +65,7 @@ taskSchema.statics.createTaskWithParent = function(task) {
                 ancestorResult,
                 createResult
             });
-        })
+      })
 
     })
     .catch(err => {
@@ -76,8 +76,19 @@ taskSchema.statics.createTaskWithParent = function(task) {
 };
 
 taskSchema.statics.updateTask = function(task) {
-  return new Promise((resolve, reject) => {
 
+  console.log(JSON.stringify(task));
+  
+  
+  this.model("Task").aggregate([
+    {$match: {_id: {$in: task.ancestors}}},
+  ])
+  .exec((err,result)=>{
+    console.log(result);
+  })
+
+  return new Promise((resolve, reject) => {
+    
     //Find the model and update it
     this.model("Task")
       .findOne({
@@ -91,13 +102,13 @@ taskSchema.statics.updateTask = function(task) {
 
           result.save()
           .then(newResult => {
-          resolve(newResult);
+            resolve(newResult);
           })
           .catch(err => {
-          reject(err);
+            reject(err);
           })
           .catch(err => {
-              reject(err);
+            reject(err);
           });
       });
 })};

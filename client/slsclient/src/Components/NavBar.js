@@ -1,7 +1,61 @@
 import React, { Component } from 'react'
 
+
+
 export class NavBar extends Component {
+
+    constructor(props){
+
+        super(props);
+
+        this.onSubmit = this.onSubmit.bind(this);
+        this.onChange = this.onChange.bind(this);
+
+        this.state = {
+            searchName: "",
+            formValid: false
+        }
+
+    }
+
+    onSubmit(e){
+
+        console.log("FormValid:" + this.state.formValid);
+
+        e.preventDefault();
+
+    }
+
+    onChange(e){
+
+        const name = e.target.name;
+
+        const value = e.target.value; 
+        
+        console.log('Name:' + name);
+
+        this.setState({[name]: value},()=>{this.validateField(name,value)});
+
+    }
+
+    validateField(fieldName,value){
+
+        let formValid = this.state.formValid;
+        
+        switch(fieldName){
+            case 'searchName':
+                formValid = value.length > 0
+                break;
+        }
+
+        this.setState({
+            formValid
+        });
+
+    }
+
     render() {
+
         return (
             <div>
                 <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -28,14 +82,16 @@ export class NavBar extends Component {
                     </li> */}
 
                     </ul>
-                    <form className="form-inline my-2 my-lg-0">
-                        <input className="form-control mr-sm-2" type="text" placeholder="Search" />
-                        <button className="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                    
+                    <form className="form-inline my-2 my-lg-0" onSubmit={this.onSubmit} >
+                        <input onChange={this.onChange} className="form-control mr-sm-2" name="searchName" type="text" placeholder="Search" />
+                        <input className="btn btn-secondary my-2 my-sm-0" type="submit" value="Search"/>
                     </form>
                 </div>
                 </nav>
             </div>
-        )
+        );
+
     }
 }
 

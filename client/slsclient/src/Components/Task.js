@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { showAddTask, hideAddTask } from "../actions/taskAddAction";
 
+import TaskForm from "./TaskForm";
+
 function mapStateToProps(state) {
   return {
     isAddForm: state.taskFormReducer.isAddForm
@@ -36,32 +38,29 @@ export class Task extends Component {
 
   renderAddTaskForm() {
     if (this.props.isAddForm) {
-      return (
-        <div id="addTaskForm">
-          <h1>Add Form</h1>
-        </div>
-      );
+      return <TaskForm />;
     }
 
     return <div></div>;
   }
 
-
   render() {
     return (
       <div>
-        <h1 id="taskHeader">Task List</h1>
+        <h1 className="list-inline-item" id="taskHeader">
+          Task List
+          <button
+            className="btn btn-info list-inline-item"
+            id="addTaskBtn"
+            onClick={this.onClickAddTask}
+          >
+            +
+          </button>
+        </h1>
+
         <div id="taskList"></div>
 
         {this.renderAddTaskForm()}
-
-        <button
-          className="btn btn-info"
-          id="addTaskBtn"
-          onClick={this.onClickAddTask}
-        >
-          Add Form
-        </button>
       </div>
     );
   }

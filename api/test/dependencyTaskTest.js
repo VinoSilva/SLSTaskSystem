@@ -39,7 +39,7 @@ describe("Dependency task function", () => {
         result.description.should.be.a("string");
         result.description.should.be.equal(doc.description);
 
-        this.task = result;
+        this.ancestorTask = result;
 
         done();
 
@@ -56,13 +56,11 @@ describe("Dependency task function", () => {
         name: "Zelda Leg Model",
         status: "In Progress",
         description: "Zelda Leg Model",
-        parent: this.task._id,
+        parent: this.ancestorTask._id,
         ancestors: []
     };
 
-    taskDoc.ancestors.push(this.task._id);
-
-    // console.log('Sending in' + JSON.stringify(taskDoc));
+    taskDoc.ancestors.push(this.ancestorTask._id);
 
     Task.createTaskWithParent(taskDoc)
     .then(result=>{
@@ -73,8 +71,7 @@ describe("Dependency task function", () => {
         result.should.have.property('createResult');
         result.createResult.should.be.a('object');
         result.createResult.should.not.equal(undefined);
-        
-        //Check create Results
+         
         result.should.have.property('createResult');
         result.createResult.should.be.a('object');
         result.createResult.should.not.equal(undefined);
@@ -101,11 +98,9 @@ describe("Dependency task function", () => {
         mongoose.Types.ObjectId.isValid(taskDoc._id).should.equal(true);
         result.createResult.parent.should.equal(taskDoc.parent);
 
-        //Check ancestor result
         result.should.have.property('ancestorResult');
         result.ancestorResult.should.not.be.equal(undefined);
         result.ancestorResult.should.be.a("array");
-        result.ancestorResult.should.have.length(1);
 
         result.ancestorResult[0].should.have.property("_id");
         result.ancestorResult[0]._id.should.be.a("object");
@@ -113,29 +108,44 @@ describe("Dependency task function", () => {
 
         result.ancestorResult[0].should.have.property("description");
         result.ancestorResult[0].description.should.be.a("string");
-        result.ancestorResult[0].description.should.equal(this.task.description);
-        
+        result.ancestorResult[0].description.should.equal(this.ancestorTask.description);
+
         result.ancestorResult[0].should.have.property("status");
         result.ancestorResult[0].status.should.be.a("string");
         result.ancestorResult[0].status.should.equal("In Progress");
 
         result.ancestorResult[0].should.have.property("name");
         result.ancestorResult[0].name.should.be.a("string");
-        result.ancestorResult[0].name.should.equal(this.task.name);
+        result.ancestorResult[0].name.should.equal(this.ancestorTask.name);
 
         result.ancestorResult[0].should.have.property("ancestors");
         result.ancestorResult[0].ancestors.should.be.a("array");
         result.ancestorResult[0].ancestors.should.have.length(0);
 
-
         this.childTask = result.createResult;
 
         done();
+
     })
     .catch((err)=>{
         throw(err);
     });
 
+  });
+
+  it('It should update the childTask to complete and update all ancestors with completed child tasks to complete', function(done){
+    
+  Task.updateTask({
+      _id: this.childTask._id,
+      name: 'New Name',
+      ancestors: this.childTask.ancestors
+    })
+    .then((result)=>{
+      done();
+    })
+    .catch((err)=>{
+      throw err;
+    });
   });
 
   after(function(done) {

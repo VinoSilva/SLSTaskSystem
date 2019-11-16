@@ -97,6 +97,8 @@ taskSchema.statics.updateTask = function(task) {
               result[element] = task[element];
           });
 
+          result.updated_at = new Date();
+
           result.save()
           .then(newResult => {
             resolve(newResult);
@@ -143,6 +145,7 @@ taskSchema.statics.getTasks = function(body){
 
     this.model("Task")
     .aggregate([
+        {$sort: {created_at: -1}},
         { $project: {name: 1,description: 1,_id: 1}},
         { $skip: (body.skip*body.limit) },
         { $limit: body.limit}

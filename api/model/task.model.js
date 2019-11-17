@@ -18,7 +18,7 @@ taskSchema.statics.createTask = function(task) {
     let doc = new this({
       _id: new mongoose.Types.ObjectId(),
       name: task.name,
-      status: task.status,
+      status: "In Progress",
       description: task.description
     });
 
@@ -39,7 +39,7 @@ taskSchema.statics.createTaskWithParent = function(task) {
     let doc = new this({
         _id: new mongoose.Types.ObjectId(),
         name: task.name,
-        status: task.status,
+        status: "In Progress",
         description: task.description,
         parent: task.parent,
         ancestors: task.ancestors
@@ -76,13 +76,6 @@ taskSchema.statics.createTaskWithParent = function(task) {
 };
 
 taskSchema.statics.updateTask = function(task) {
-
-  // this.model("Task").aggregate([
-  //   {$match: {_id: {$in: task.ancestors}}},
-  // ])
-  // .exec((err,result)=>{
-  //   console.log(result);
-  // })
 
   return new Promise((resolve, reject) => {
     
@@ -146,7 +139,7 @@ taskSchema.statics.getTasks = function(body){
     this.model("Task")
     .aggregate([
         {$sort: {created_at: -1}},
-        { $project: {name: 1,description: 1,_id: 1}},
+        { $project: {name: 1,description: 1,_id: 1,status: 1}},
         { $skip: (body.skip*body.limit) },
         { $limit: body.limit}
     ])

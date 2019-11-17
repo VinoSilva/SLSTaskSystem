@@ -46,6 +46,8 @@ export class NavBar extends Component {
             case 'searchName':
                 formValid = value.length > 0
                 break;
+            default:
+                break;
         }
 
         this.setState({

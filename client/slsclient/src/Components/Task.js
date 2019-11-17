@@ -1,33 +1,35 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { showAddTask, hideAddTask } from "../actions/taskAddAction";
+import { getPageSuccessful } from '../actions/taskPageAction';
 
 import TaskForm from "./TaskForm";
 import TaskCard from "./TaskCard";
+import TaskPage from './TaskPage';
+import TaskLists from './TaskLists';
 
 function mapStateToProps(state) {
   return {
-    isAddForm: state.taskFormReducer.isAddForm
+    isAddForm: state.taskFormReducer.isAddForm,
+    currentPage: state.taskReducer.currentPage,
+    tasksPerPage: state.taskReducer.tasksPerPage,
+    count: state.taskReducer.count,
+    tasks: state.taskReducer.tasks
   };
 }
 
-// // in this object, keys become prop names,
-// // and values should be action creator functions.
-// // They get bound to `dispatch`.
-// const mapDispatchToProps = dispatch => ({
-//     showAddTask,
-//     hideAddTask,
-//     dispatch
-// })
-
 export class Task extends Component {
 
-
-
   constructor(props) {
+
     super(props);
 
     this.onClickAddTask = this.onClickAddTask.bind(this);
+
+    this.state = {
+      currentPage: -1
+    };
+
   }
 
   onClickAddTask() {
@@ -48,10 +50,81 @@ export class Task extends Component {
     return <div></div>;
   }
 
+  populateTasks(){
+    if(this.state.currentPage == this.props.currentPage){
+      return;
+    }
+    else{
+      this.setState({
+        currentPage: this.props.currentPage
+      },()=>{
+        this.fetchPageTasks();
+      });
+    }
+  }
+
+  fetchPageTasks()
+  {
+      let bodyData = {
+          limit: 20,
+          skip: this.props.currentPage
+      };
+
+      let fetchData = {
+          method: 'POST',
+          body: JSON.stringify(bodyData),
+          credentials: 'include',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      };
+
+      fetch("http://localhost:4000/task/page/",fetchData)
+      .then((res)=>{
+          if(res.status === 200){
+              return res.json();
+          }
+      })
+      .then((data)=>{
+          if(data){
+
+            let pages = 0;
+            
+            if(data.count !== 0 && data.tasksPerPage !== 0){
+              pages = Math.ceil(data.count/data.tasksPerPage);
+            }
+
+            let dispatchData = getPageSuccessful();
+            
+            dispatchData.payload = {};
+
+            dispatchData.payload.tasks = data.tasks;
+            dispatchData.payload.totalPages = pages;
+            dispatchData.payload.count =  data.count;
+            dispatchData.payload.currentPage =  data.currentPage;
+            dispatchData.payload.tasksPerPage = data.tasksPerPage;
+
+            this.props.dispatch(dispatchData);
+
+          }
+    })
+    .catch((err)=>{
+        console.log(err);
+    });
+  }
+
+  componentDidMount(){
+    this.populateTasks();
+  }
+
+  componentDidUpdate(){
+    this.populateTasks();
+  }
+
   render() {
 
     return (
-      <div>
+      <div className="container-fluid">
         <h1 className="list-inline-item" id="taskHeader">
           Task List
           <button
@@ -67,25 +140,13 @@ export class Task extends Component {
 
         {this.renderAddTaskForm()}
 
-        <div class = "row">
-          {/* <TaskCard />
-          <TaskCard />
-          <TaskCard />
-          <TaskCard />
-          <TaskCard />
-          <TaskCard />
-          <TaskCard />
-          <TaskCard />
-          <TaskCard />
-          <TaskCard />
-          <TaskCard />
-          <TaskCard /> */}
-        </div>
+        <TaskLists />
+
+        <TaskPage />
+
       </div>
     );
   }
 }
 
-// export default connect(mapStateToProps,mapDispatchToProps)(Counter);
-// export default  connect(mapDispatchToProps,mapStateToProps)(Task);
 export default connect(mapStateToProps)(Task);

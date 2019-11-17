@@ -4555,7 +4555,8 @@ input[type="button"].btn-block {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
-  min-width: 0;
+  min-width: 250px;
+  min-height: 200px;
   word-wrap: break-word;
   background-color: #fff;
   background-clip: border-box;
@@ -4563,6 +4564,7 @@ input[type="button"].btn-block {
   border-radius: 0.25rem;
   margin: 20px;
   padding: 30px;
+  text-align: center;
 }
 .card > hr {
   margin-right: 0;
@@ -4603,6 +4605,7 @@ input[type="button"].btn-block {
   margin-bottom: 0;
   background-color: rgba(248, 245, 240, 0.25);
   border-bottom: 1px solid rgba(223, 215, 202, 0.75);
+  text-align: center;
 }
 .card-header:first-child {
   border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;

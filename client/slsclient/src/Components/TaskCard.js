@@ -36,12 +36,21 @@ export class TaskCard extends Component {
     render() {
         return (
             <div className={this.state.cardStyle} style={{ maxWidth: 250 }}>
-                <div className="card-header">Finish Zelda Animation</div>
+                <div className="card-header">
+                    {/* <h6>{this.props.name}</h6> */}
+                    <input type="checkbox"></input>
+                </div>
+
                 <div className="card-body">
-                    <h4 className="card-title">Info card title</h4>
-                    <p className="card-text">Zelda animation for running,idle,attack and fighting.</p>
+                    {/* <h4 className="card-title">Info card title</h4> */}
+                    <p className="card-text">{this.props.description}</p>
+  
+                </div>
+                <div >
+                    <button className="btn btn-success">Edit</button>
                 </div>
             </div>
+
         );
     }
 }

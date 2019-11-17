@@ -24,15 +24,35 @@ export class TaskForm extends Component {
     onSubmit(e){
 
         if(this.state.formValid){
-            console.log('Submission');
             
-            let json = {
+            let bodyData = {
                 name: this.state.name,
                 description: this.state.description
             }
 
-            console.log(JSON.stringify(json));
-            
+            let fetchData = {
+                method: 'POST',
+                body: JSON.stringify(bodyData),
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            fetch("http://localhost:4000/task/",fetchData)
+            .then((res)=>{
+                if(res.status === 200){
+                    return res.json();
+                }
+            })
+            .then((data)=>{
+                if(data){
+                    console.log(JSON.stringify(data));
+                }
+            })
+            .catch((err)=>{
+                console.log(err);
+            });
         }
         
         e.preventDefault();
@@ -99,12 +119,16 @@ export class TaskForm extends Component {
                 </div> 
 
                 <form onSubmit={this.onSubmit}>
+                    
+                    <div className="form-group">
+                        <label className ="col-form-label">Task Name</label>
+                        <input type="text" className="form-control" name="name" onChange={this.onChange}/>
+                    </div>
 
-                    <label className ="col-form-label">Task Name</label>
-                    <input type="text" className="form-control" name="name" onChange={this.onChange}/>
-
-                    <label className ="col-form-label">Description</label>
-                    <textarea className="form-control" name="description" rows="3" onChange={this.onChange}></textarea>
+                    <div className="form-group">
+                        <label className ="col-form-label">Description</label>
+                        <textarea className="form-control" name="description" rows="3" onChange={this.onChange}></textarea>
+                    </div>
 
                     <br />
 

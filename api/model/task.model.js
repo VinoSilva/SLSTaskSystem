@@ -123,8 +123,9 @@ taskSchema.statics.deleteTask = function(task) {
 taskSchema.statics.getTask = function(task){
   return new Promise((resolve,reject)=>{
     this.model("Task")
-    .findOne({_id: task._id})
+    .findOne({"name":task.name}) //Graph ql here
     .then((result)=>{
+      
       resolve(result);
     })
     .catch((err)=>{

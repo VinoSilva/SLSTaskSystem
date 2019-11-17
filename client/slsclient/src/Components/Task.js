@@ -4,7 +4,6 @@ import { showAddTask, hideAddTask } from "../actions/taskAddAction";
 import { getPageSuccessful } from '../actions/taskPageAction';
 
 import TaskForm from "./TaskForm";
-import TaskCard from "./TaskCard";
 import TaskPage from './TaskPage';
 import TaskLists from './TaskLists';
 
@@ -51,7 +50,8 @@ export class Task extends Component {
   }
 
   populateTasks(){
-    if(this.state.currentPage == this.props.currentPage){
+    //To prevent inifnite loop fetching
+    if(this.state.currentPage === this.props.currentPage){
       return;
     }
     else{

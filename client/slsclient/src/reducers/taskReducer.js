@@ -37,8 +37,6 @@ export default function taskReducer(state = initialState,action){
                 ...state,
                 currentPage,
             };
-
-            break;
         case GET_PAGE_SUCCESSFUL:
             
              let totalPages = action.payload.totalPages;
@@ -56,8 +54,6 @@ export default function taskReducer(state = initialState,action){
                  tasks,
                  currentPage
              };
-
-            break;
         default:
             return state;
     }

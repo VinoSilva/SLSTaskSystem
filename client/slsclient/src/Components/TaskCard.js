@@ -3,8 +3,6 @@
 import React, { Component } from 'react'
 
 export class TaskCard extends Component {
-
-
  
     getRandomInt(minIndex, maxIndex) {
         minIndex = Math.ceil(minIndex);
@@ -26,19 +24,37 @@ export class TaskCard extends Component {
             // "card border-light mb-3",
         ];
 
+        // var styleArray = [
+        //     "card text-white bg-primary mb-3",
+        //     "card text-white bg-success mb-3",
+        //     "card text-white bg-info mb-3",
+        //     "card bg-light mb-3",
+        //     "card text-white bg-dark mb-3"
+        // ];
+
         let cardStyle = styleArray[this.getRandomInt(0,styleArray.length-1)];
 
         this.state = {
             cardStyle
         }
+
+        this.onChange = this.onChange.bind(this);
     }
+
+    onChange(e){
+        // console.log("Name:" + e.target.name + "  Value:" + e.target.checked);
+    }
+
+    // checked={this.props.status=="Complete"};
 
     render() {
         return (
             <div className={this.state.cardStyle} style={{ maxWidth: 250 }}>
                 <div className="card-header">
-                    {/* <h6>{this.props.name}</h6> */}
-                    <input type="checkbox"></input>
+                    <div className="form-group">
+                        <input type="checkbox" className="" id="customSwitch1" onChange={this.onChange} />
+                    </div>
+                    <h6>{this.props.name}</h6>
                 </div>
 
                 <div className="card-body">

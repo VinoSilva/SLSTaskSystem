@@ -22,7 +22,6 @@ app.use(cors(corsOptions));
 const taskRoute = require('./routes/task.routes');
 
 
-
 require('dotenv').config();
 
 //Setup middlewares

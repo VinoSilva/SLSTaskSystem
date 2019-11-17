@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import {changePage} from "../actions/taskPageAction";
-import { hideAddTask } from "../actions/taskAddAction";
-
 
 function mapStateToProps(state){
     return {

@@ -63,8 +63,20 @@ exports.deleteTask = function(req,res){
 }
 
 exports.getTask = function(req,res){
+
+    //Add graph ql
+    //Hack currently
+    let jsonData = {
+        "name": req.query.name,
+        "_id": req.query._id
+    };
+
+    if(!jsonData._id){
+        jsonData._id = req.body._id
+    }
+
     Task
-    .getTask(req.body)
+    .getTask(jsonData)
     .then((result)=>{
 
         if(result){
@@ -94,8 +106,6 @@ exports.getTask = function(req,res){
 
 exports.getTasks = function(req,res){
 
-
-
     Task.getTasks(req.body)
     .then((result)=>{
 
@@ -113,5 +123,6 @@ exports.getTasks = function(req,res){
         return res.status(404).json({
             fail: "Fail"
         })
-    })
+    });
+
 };

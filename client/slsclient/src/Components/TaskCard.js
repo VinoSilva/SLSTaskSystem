@@ -39,17 +39,28 @@ export class TaskCard extends Component {
         }
 
         this.onChange = this.onChange.bind(this);
+        this.onClickEdit = this.onClickEdit.bind(this);
+
     }
 
     onChange(e){
         // console.log("Name:" + e.target.name + "  Value:" + e.target.checked);
     }
 
-    // checked={this.props.status=="Complete"};
+    onClickEdit(){
+        var path = `/task/${this.props.name}`;
+    
+        this.props.history.push(path,{
+            _id: this.props._id,
+            description: this.props.description
+        });
+    }
 
     render() {
         return (
+
             <div className={this.state.cardStyle} style={{ maxWidth: 250 }}>
+                
                 <div className="card-header">
                     <div className="form-group">
                         <input type="checkbox" className="" id="customSwitch1" onChange={this.onChange} />
@@ -63,8 +74,13 @@ export class TaskCard extends Component {
   
                 </div>
                 <div >
-                    <button className="btn btn-success">Edit</button>
+
+                    {/* <Link to = {`/task/${this.props._id}`} className="btn btn-success">Edit</Link> */}
+
+                    <button className = "btn btn-success" onClick={this.onClickEdit}>Edit</button>
+                    
                 </div>
+
             </div>
 
         );

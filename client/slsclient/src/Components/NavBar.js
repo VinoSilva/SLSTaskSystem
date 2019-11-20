@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {Link} from 'react-router-dom';
 
 export class NavBar extends Component {
   constructor(props) {
@@ -16,8 +17,11 @@ export class NavBar extends Component {
 
   onSubmit(e) {
     let fetchData = {
-      method: "GET",
+      method: "POST",
       credentials: "include",
+      body: JSON.stringify({
+        name: this.state.searchName
+      }),
       headers: {
         "Content-Type": "application/json"
       }
@@ -25,7 +29,7 @@ export class NavBar extends Component {
 
     if (this.state.formValid) {
       fetch(
-        `http://localhost:4000/task/?name=${this.state.searchName}`,
+        'http://localhost:4000/task/find/',
         fetchData
       )
         .then(res => {
@@ -37,7 +41,17 @@ export class NavBar extends Component {
         })
         .then(data => {
           if (data) {
-            console.log(JSON.stringify(data));
+
+            if(data.success){
+              console.log(JSON.stringify(data));
+
+              var path = `/task/${data.task.name}`;
+    
+              this.props.history.push(path,{
+                  _id: data.task._id,
+                  description: data.task.description
+              });
+            }
           }
         })
         .catch(err => {
@@ -112,7 +126,9 @@ export class NavBar extends Component {
 
           {/* <a className="navbar-brand" href="#">Home</a> */}
 
-            <a className="navbar-brand">Home</a>
+            {/* <a className="navbar-brand" href="#">Home</a> */}
+
+            <Link to = "/" className="navbar-brand">Home</Link>
 
             <button
                 className="navbar-toggler"

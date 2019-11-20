@@ -1,82 +1,34 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import {changePage} from "../actions/taskPageAction";
+import React, { Component } from 'react';
 
-function mapStateToProps(state){
-    return {
-        currentPage: state.taskReducer.currentPage,
-        totalPages: state.taskReducer.totalPages,
-        tasksPerPage: state.taskReducer.tasksPerPage
-    };
-}
+import Navbar from './NavBar';
 
 export class TaskPage extends Component {
-  constructor(props) {
-    super(props);
+    render() {
 
-    this.changePage = this.changePage.bind(this);
-  }
+        return (
 
-  changePage(newPage){
-      let dispatchData = changePage();
+            <div>
 
-      dispatchData.payload = {};
-      
-      dispatchData.payload.currentPage = newPage;
+                <Navbar history={this.props.history} />
 
 
-      this.props.dispatch(dispatchData);
-  }
+                <div className="container-fluid">
+                    <h1>Task {this.props.match.params.id}</h1>
 
-  range(start, end, step = 1) {
-    const len = Math.floor((end - start) / step) + 1;
-    return Array(len)
-      .fill()
-      .map((_, idx) => start + idx * step);
-  }
+                    <p>
+                        Description:
+                    </p>
 
-  renderPageButtons() {
+                    <p>
+                        {this.props.location.state.description}
+                    </p>
+                </div>
 
-    let arr = this.range(0, this.props.totalPages - 1, 1);
+            </div>
 
-    return (
-      <div>
-        <ul className="pagination pagination-lg">
-          {arr.map((pageNumber, index) => {
-            let className = "page-item";
-
-            //Put current page here
-            if (pageNumber === this.props.currentPage) {
-              className = "page-item active";
-            }
-
-            return (
-              <li key={index} className={className}>
-                <button
-                  onClick={() => {
-                    this.changePage(pageNumber);
-                  }}
-                  className="page-link"
-                >
-                  {pageNumber}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    );
-  }
-
-  render() {
-
-    return (
-      <div>
-        {this.renderPageButtons()}
-      </div>
-    );
-
-  }
+        )
+    }
 }
 
-export default connect(mapStateToProps)(TaskPage);
+export default TaskPage
+

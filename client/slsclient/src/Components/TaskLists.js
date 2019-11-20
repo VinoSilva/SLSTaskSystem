@@ -19,7 +19,7 @@ export class TaskLists extends Component {
             
             return (
               <div key={task._id}>
-                <TaskCard status={task.status} _id = {task._id} status = {task.status} name = {task.name} description = {task.description} />
+                <TaskCard history={this.props.history} status={task.status} _id = {task._id} status = {task.status} name = {task.name} description = {task.description} />
               </div>
             );
           })}

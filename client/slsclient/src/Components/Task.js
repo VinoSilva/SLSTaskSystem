@@ -4,7 +4,7 @@ import { showAddTask, hideAddTask } from "../actions/taskAddAction";
 import { getPageSuccessful } from '../actions/taskPageAction';
 
 import TaskForm from "./TaskForm";
-import TaskPage from './TaskPage';
+import TaskPaginate from './TaskPaginate';
 import TaskLists from './TaskLists';
 
 function mapStateToProps(state) {
@@ -140,9 +140,9 @@ export class Task extends Component {
 
         {this.renderAddTaskForm()}
 
-        <TaskLists />
+        <TaskLists history={this.props.history} />
 
-        <TaskPage />
+        <TaskPaginate />
 
       </div>
     );

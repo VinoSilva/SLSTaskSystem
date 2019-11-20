@@ -62,23 +62,14 @@ exports.deleteTask = function(req,res){
     });
 }
 
-exports.getTask = function(req,res){
+exports.findTask = function(req,res){
 
-    //Add graph ql
-    //Hack currently
-    let jsonData = {
-        "name": req.query.name,
-        "_id": req.query._id
-    };
 
-    if(!jsonData._id){
-        jsonData._id = req.body._id
-    }
-
+    
     Task
-    .getTask(jsonData)
+    .getTask(req.body)
     .then((result)=>{
-
+        
         if(result){
             return res.status(200).json({
                 success: 'Success',

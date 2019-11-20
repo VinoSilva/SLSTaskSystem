@@ -121,15 +121,20 @@ taskSchema.statics.deleteTask = function(task) {
 };
 
 taskSchema.statics.getTask = function(task){
+
+
   return new Promise((resolve,reject)=>{
     this.model("Task")
-    .findOne({"name":task.name}) //Graph ql here
+    .findOne(task) //Graph ql here
     .then((result)=>{
       
       resolve(result);
+
     })
     .catch((err)=>{
       console.log(err);
+      
+      reject(err);
     })
   });
 }

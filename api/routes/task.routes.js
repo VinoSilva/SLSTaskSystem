@@ -7,7 +7,7 @@ const taskController = require("../controller/task.controller");
 router.post("/", taskController.createTask);
 router.patch("/", taskController.updateTask);
 router.delete("/", taskController.deleteTask);
-router.get("/", taskController.getTask);
+router.post("/find", taskController.findTask);
 router.post("/page", taskController.getTasks);
 
 // router.patch('/logout',userController.updateTasks);

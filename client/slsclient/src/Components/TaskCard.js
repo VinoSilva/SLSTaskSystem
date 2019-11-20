@@ -62,9 +62,9 @@ export class TaskCard extends Component {
             <div className={this.state.cardStyle} style={{ maxWidth: 250 }}>
                 
                 <div className="card-header">
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <input type="checkbox" className="" id="customSwitch1" onChange={this.onChange} />
-                    </div>
+                    </div> */}
                     <h6>{this.props.name}</h6>
                 </div>
 

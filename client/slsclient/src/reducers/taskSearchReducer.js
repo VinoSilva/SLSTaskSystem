@@ -1,7 +1,4 @@
 import {
-    searchTaskBegin,
-    searchTaskSuccess,
-    searchTaskFailed,
     SEARCH_TASK_BEGIN,
     SEARCH_TASK_SUCCESS,
     SEARCH_TASK_FAILED

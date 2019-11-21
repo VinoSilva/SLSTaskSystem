@@ -25,16 +25,19 @@ export function getPageFailed(error){
     };
 }
 
-export function getPageBegin(){
+export function getPageBegin(page){
     return {
-        type: GET_PAGE_BEGIN
+        type: GET_PAGE_BEGIN,
+        payload: {
+            page
+        }
     };
 }
 
 export const getTaskPage = ({limit,skip}) => {
     return dispatch => {
 
-        dispatch(getPageBegin());
+        dispatch(getPageBegin(skip));
 
         axios.post('http://localhost:4000/task/page',{
             limit,

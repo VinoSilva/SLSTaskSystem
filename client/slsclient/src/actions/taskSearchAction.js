@@ -38,28 +38,6 @@ export const getTask = ({name})=>{
         .catch((err)=>{
             console.log(err);
             dispatch(searchTaskFailed(err));
-        })
-
-        //FETCH
-
-        // let bodyData =  {
-        //     name
-        // }
-
-        // fetch("https://localhost:4000/task/find/",{
-        //     method: 'post',
-        //     headers: {'Content-Type':'application/json'},
-        //     body: JSON.stringify(bodyData)
-        // })
-        // .then((res)=>{
-        //     return res.json();
-        // })
-        // .then((data)=>{
-        //     dispatch(searchTaskSuccess(data));
-        // })
-        // .catch((err)=>{
-        //     console.log(err);
-        //     dispatch(searchTaskFailed(err));
-        // })
+        });
     }
 }

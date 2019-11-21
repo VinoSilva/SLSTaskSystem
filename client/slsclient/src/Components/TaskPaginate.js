@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import {changePage} from "../actions/taskPageAction";
+import {getPageBegin} from "../actions/taskPageAction";
+
+
 
 function mapStateToProps(state){
     return {
@@ -18,21 +20,19 @@ export class TaskPage extends Component {
   }
 
   changePage(newPage){
-      let dispatchData = changePage();
 
-      dispatchData.payload = {};
+      // let dispatchData = changePage();
+
+      // dispatchData.payload = {};
       
-      dispatchData.payload.currentPage = newPage;
+      // dispatchData.payload.currentPage = newPage;
 
+      this.props.dispatch(getPageBegin(newPage));
 
-      this.props.dispatch(dispatchData);
   }
 
   range(start, end, step = 1) {
 
-    console.log('start:'+start);
-    console.log('end:'+end);
-    console.log('step:'+step);
 
     const len = Math.floor((end - start) / step) + 1;
     return Array(len)
@@ -41,8 +41,8 @@ export class TaskPage extends Component {
   }
 
   renderPageButtons() {
-    
-    if(this.props.totalPages && this.props.totalPages.length > 0){
+
+    if(this.props.totalPages){
       let arr = this.range(0, this.props.totalPages - 1, 1);
 
       return (

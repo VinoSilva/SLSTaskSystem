@@ -13,13 +13,13 @@ describe('Test task form reducer', () => {
         // fetchMock.restore();
     });
 
-    it('Store should dispatch SHOWADDTASK type action',() => {
+    it('Store should dispatch SHOW_ADD_TASK type action',() => {
         const store = mockStore({
             taskReducer 
         });
 
         let expectedActions = [{
-            type: "SHOWADDTASK"
+            type: "SHOW_ADD_TASK"
         }];
 
         store.dispatch(actions.showAddTask());
@@ -27,13 +27,13 @@ describe('Test task form reducer', () => {
         expect(store.getActions()).toEqual(expectedActions);
     });
     
-    it('Store should dispatch HIDEADDTASK type action',() => {
+    it('Store should dispatch HIDE_ADD_TASK type action',() => {
         const store = mockStore({
             taskReducer 
         });
 
         let expectedActions = [{
-            type: "HIDEADDTASK"
+            type: "HIDE_ADD_TASK"
         }];
 
         store.dispatch(actions.hideAddTask());

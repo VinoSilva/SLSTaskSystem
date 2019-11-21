@@ -17,12 +17,14 @@ const initialState = {
 };
 
 export default function taskReducer(state = initialState, action) {
+
   let currentPage = 0;
 
   switch (action.type) {
     case GET_PAGE_SUCCESS: {
-      let totalPages = action.payload.totalPages;
+
       let count = action.payload.count;
+      let totalPages = Math.ceil(action.payload.count/action.payload.tasksPerPage);
       let tasksPerPage = action.payload.tasksPerPage;
       let tasks = action.payload.tasks;
       currentPage = action.payload.currentPage;
@@ -37,6 +39,7 @@ export default function taskReducer(state = initialState, action) {
         loading: false,
         error: null
       };
+
     }
     case GET_PAGE_FAILED: {
 
@@ -45,6 +48,7 @@ export default function taskReducer(state = initialState, action) {
         loading: false,
         error: action.payload.error
       };
+
     }
     case GET_PAGE_BEGIN: {
 
@@ -52,9 +56,12 @@ export default function taskReducer(state = initialState, action) {
         ...state,
         loading: true,
         error: null,
+        currentPage: action.payload.page
       };
+
     }
     default:
       return state;
+
   }
 }

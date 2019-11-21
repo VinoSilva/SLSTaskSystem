@@ -5,9 +5,6 @@ import NavBar from './NavBar';
 export class Home extends Component {
     render() {
 
-        console.log('Home rendered');
-        
-
         return (
             <div>
                 <NavBar history={this.props.history}/>

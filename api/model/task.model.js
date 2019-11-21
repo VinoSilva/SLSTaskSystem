@@ -139,7 +139,7 @@ taskSchema.statics.getTask = function(task){
   });
 }
 
-taskSchema.statics.getTasks = function(body){
+taskSchema.statics.findTasks = function(body){
   return new Promise((resolve,reject)=>{
 
     this.model("Task")

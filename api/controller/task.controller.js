@@ -63,8 +63,6 @@ exports.deleteTask = function(req,res){
 }
 
 exports.findTask = function(req,res){
-
-
     
     Task
     .getTask(req.body)
@@ -95,9 +93,9 @@ exports.findTask = function(req,res){
     })
 };
 
-exports.getTasks = function(req,res){
+exports.findTasks = function(req,res){
 
-    Task.getTasks(req.body)
+    Task.findTasks(req.body)
     .then((result)=>{
 
         return res.status(200).json({

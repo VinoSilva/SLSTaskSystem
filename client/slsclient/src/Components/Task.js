@@ -1,11 +1,27 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { showAddTask, hideAddTask } from "../actions/taskAddAction";
-import { getPageSuccessful } from '../actions/taskPageAction';
+import { getPageSuccess } from '../actions/taskPageAction';
 
 import TaskForm from "./TaskForm";
 import TaskPaginate from './TaskPaginate';
 import TaskLists from './TaskLists';
+
+import {getTaskPage} from '../actions/taskPageAction';
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onGetTaskPage: taskPage => {
+      dispatch(getTaskPage(taskPage));
+    },
+    showAddForm: () => {
+      dispatch(showAddTask());
+    },
+    hideAddTask: () => {
+      dispatch(hideAddTask());
+    }
+  }
+}
 
 function mapStateToProps(state) {
   return {
@@ -13,7 +29,9 @@ function mapStateToProps(state) {
     currentPage: state.taskReducer.currentPage,
     tasksPerPage: state.taskReducer.tasksPerPage,
     count: state.taskReducer.count,
-    tasks: state.taskReducer.tasks
+    tasks: state.taskReducer.tasks,
+    loading: state.taskReducer.loading,
+    error: state.taskReducer.error
   };
 }
 
@@ -34,10 +52,10 @@ export class Task extends Component {
   onClickAddTask() {
     if (this.props.isAddForm) {
       //Hide the form
-      this.props.dispatch(hideAddTask());
+      this.props.hideAddTask();
     } else {
       //Show the form
-      this.props.dispatch(showAddTask());
+      this.props.showAddForm();
     }
   }
 
@@ -58,7 +76,11 @@ export class Task extends Component {
       this.setState({
         currentPage: this.props.currentPage
       },()=>{
-        this.fetchPageTasks();
+        // this.fetchPageTasks();
+
+        this.props.onGetTaskPage({
+          limit: this.props.tasksPerPage,
+          skip: this.props.currentPage});
       });
     }
   }
@@ -66,7 +88,7 @@ export class Task extends Component {
   fetchPageTasks()
   {
       let bodyData = {
-          limit: 20,
+          limit: this.props.tasksPerPage,
           skip: this.props.currentPage
       };
 
@@ -94,7 +116,7 @@ export class Task extends Component {
               pages = Math.ceil(data.count/data.tasksPerPage);
             }
 
-            let dispatchData = getPageSuccessful();
+            let dispatchData = getPageSuccess();
             
             dispatchData.payload = {};
 
@@ -121,32 +143,60 @@ export class Task extends Component {
     this.populateTasks();
   }
 
+  renderContent(){
+    return (
+      <div className="container-fluid">
+      <h1 className="list-inline-item" id="taskHeader">
+        Task List
+        <button
+          className="btn btn-info list-inline-item"
+          id="addTaskBtn"
+          onClick={this.onClickAddTask}
+        >
+          +
+        </button>
+      </h1>
+
+      <div id="taskList"></div>
+
+      {this.renderAddTaskForm()}
+
+      <TaskLists history={this.props.history} />
+
+      <TaskPaginate />
+
+    </div>
+    );
+  }
+
+  renderLoading(){
+
+    return(
+      <div>
+        <div className="spinner-grow text-dark" role="status">
+            <span className="sr-only">Loading...</span>
+        </div>
+        <div className="spinner-grow text-dark" role="status">
+            <span className="sr-only">Loading...</span>
+        </div>
+        <div className="spinner-grow text-dark" role="status">
+            <span className="sr-only">Loading...</span>
+        </div>
+        <div className="spinner-grow text-dark" role="status">
+            <span className="sr-only">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   render() {
 
     return (
-      <div className="container-fluid">
-        <h1 className="list-inline-item" id="taskHeader">
-          Task List
-          <button
-            className="btn btn-info list-inline-item"
-            id="addTaskBtn"
-            onClick={this.onClickAddTask}
-          >
-            +
-          </button>
-        </h1>
-
-        <div id="taskList"></div>
-
-        {this.renderAddTaskForm()}
-
-        <TaskLists history={this.props.history} />
-
-        <TaskPaginate />
-
+      <div>
+        {this.props.loading ? this.renderLoading() : this.renderContent()}
       </div>
     );
   }
 }
 
-export default connect(mapStateToProps)(Task);
+export default connect(mapStateToProps,mapDispatchToProps)(Task);

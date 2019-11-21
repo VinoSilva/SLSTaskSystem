@@ -8,7 +8,7 @@ router.post("/", taskController.createTask);
 router.patch("/", taskController.updateTask);
 router.delete("/", taskController.deleteTask);
 router.post("/find", taskController.findTask);
-router.post("/page", taskController.getTasks);
+router.post("/page", taskController.findTasks);
 
 // router.patch('/logout',userController.updateTasks);
 

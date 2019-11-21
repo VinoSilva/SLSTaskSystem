@@ -1,60 +1,60 @@
-import {
-    FETCH_TASK_BEGIN,
-    FETCH_TASK_SUCCESS,
-    FETCH_TASK_FAILURE,
-} from '../actions/taskRequestAction';
+import {} from "../actions/taskRequestAction";
 
 import {
-    CHANGEPAGE,
-    GET_PAGE_SUCCESSFUL
-} from '../actions/taskPageAction';
+  CHANGE_PAGE,
+  GET_PAGE_SUCCESS,
+  GET_PAGE_BEGIN,
+  GET_PAGE_FAILED
+} from "../actions/taskPageAction";
 
 const initialState = {
-    currentPage: 0,
-    totalPages: 0,
-    tasksPerPage: 20,
-    count: 0,
-    tasks: []
+  currentPage: 0,
+  totalPages: 0,
+  tasksPerPage: 20,
+  count: 0,
+  tasks: [],
+  loading: false
 };
 
-export default function taskReducer(state = initialState,action){
+export default function taskReducer(state = initialState, action) {
+  let currentPage = 0;
 
-    let currentPage = 0;
+  switch (action.type) {
+    case GET_PAGE_SUCCESS: {
+      let totalPages = action.payload.totalPages;
+      let count = action.payload.count;
+      let tasksPerPage = action.payload.tasksPerPage;
+      let tasks = action.payload.tasks;
+      currentPage = action.payload.currentPage;
 
-    switch(action.type){
-
-        case FETCH_TASK_BEGIN:
-            break;
-        case FETCH_TASK_SUCCESS:
-            break;
-        case FETCH_TASK_FAILURE:
-            break;
-        case CHANGEPAGE:
-            
-            currentPage = action.payload.currentPage;
-
-            return {
-                ...state,
-                currentPage,
-            };
-        case GET_PAGE_SUCCESSFUL:
-            
-             let totalPages = action.payload.totalPages;
-             let count = action.payload.count;
-             let tasksPerPage = action.payload.tasksPerPage;
-             let tasks = action.payload.tasks;
-             currentPage = action.payload.currentPage;
-             
-
-             return {
-                 ...state,
-                 totalPages,
-                 count,
-                 tasksPerPage,
-                 tasks,
-                 currentPage
-             };
-        default:
-            return state;
+      return {
+        ...state,
+        totalPages,
+        count,
+        tasksPerPage,
+        tasks,
+        currentPage,
+        loading: false,
+        error: null
+      };
     }
+    case GET_PAGE_FAILED: {
+
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error
+      };
+    }
+    case GET_PAGE_BEGIN: {
+
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    }
+    default:
+      return state;
+  }
 }

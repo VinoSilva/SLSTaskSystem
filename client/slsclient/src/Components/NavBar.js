@@ -1,5 +1,25 @@
 import React, { Component } from "react";
 import {Link} from 'react-router-dom';
+import { connect } from "react-redux";
+
+import {getTask} from '../actions/taskSearchAction';
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onGetTask: task => {
+      dispatch(getTask(task))
+    }
+  }
+}
+
+function mapStateToProps(state) {
+
+  return {
+    loading: state.taskSearchReducer.loading,
+    error: state.taskSearchReducer.error,
+    task: state.taskSearchReducer.task
+  };
+}
 
 export class NavBar extends Component {
   constructor(props) {
@@ -11,58 +31,18 @@ export class NavBar extends Component {
     this.state = {
       searchName: "",
       formValid: false,
-      isLoading: false
     };
   }
 
   onSubmit(e) {
-    let fetchData = {
-      method: "POST",
-      credentials: "include",
-      body: JSON.stringify({
-        name: this.state.searchName
-      }),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
 
     if (this.state.formValid) {
-      fetch(
-        'http://localhost:4000/task/find/',
-        fetchData
-      )
-        .then(res => {
-          if (res.status === 200) {
-            return res.json();
-          } else if (res.status === 404) {
-            return res.json();
-          }
-        })
-        .then(data => {
-          if (data) {
 
-            if(data.success){
-              console.log(JSON.stringify(data));
-
-              var path = `/task/${data.task.name}`;
-    
-              this.props.history.push(path,{
-                  _id: data.task._id,
-                  description: data.task.description
-              });
-            }
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.props.onGetTask({name: this.state.searchName});
     }
 
     e.preventDefault();
   }
-
-  fetchTask() {}
 
   onChange(e) {
     const name = e.target.name;
@@ -88,6 +68,22 @@ export class NavBar extends Component {
     this.setState({
       formValid
     });
+  }
+
+  renderLoading(){
+    return (
+      <div className="my-2 my-lg-0">
+          <div className="spinner-grow text-light" role="status">
+              <span className="sr-only">Loading...</span>
+          </div>
+          <div className="spinner-grow text-light" role="status">
+              <span className="sr-only">Loading...</span>
+          </div>
+          <div className="spinner-grow text-light" role="status">
+              <span className="sr-only">Loading...</span>
+          </div>
+      </div>
+    )
   }
 
   renderSearchBar() {
@@ -117,44 +113,48 @@ export class NavBar extends Component {
     }
   }
 
+  renderContent(){
+
+    return (
+      <div>
+          <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+
+              <Link to = "/" className="navbar-brand">Home</Link>
+
+              <button
+                  className="navbar-toggler"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#navbarColor01"
+                  aria-controls="navbarColor01"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation"
+              >
+
+              <span className="navbar-toggler-icon"></span>
+
+            </button>
+          
+            <div className="collapse navbar-collapse" id="navbarColor01">
+              
+              <ul className="navbar-nav mr-auto"></ul>
+
+              {this.props.loading ? this.renderLoading(): this.renderSearchBar()}
+
+            </div>
+          </nav>
+        </div>
+    );
+  }
+
   render() {
     return (
       <div>
-          
-        <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-
-
-          {/* <a className="navbar-brand" href="#">Home</a> */}
-
-            {/* <a className="navbar-brand" href="#">Home</a> */}
-
-            <Link to = "/" className="navbar-brand">Home</Link>
-
-            <button
-                className="navbar-toggler"
-                type="button"
-                data-toggle="collapse"
-                data-target="#navbarColor01"
-                aria-controls="navbarColor01"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
-
-            <span className="navbar-toggler-icon"></span>
-
-          </button>
-         
-          <div className="collapse navbar-collapse" id="navbarColor01">
-            
-            <ul className="navbar-nav mr-auto"></ul>
-
-            {this.renderSearchBar()}
-
-          </div>
-        </nav>
+        {this.renderContent()}
       </div>
     );
   }
 }
 
-export default NavBar;
+// export default NavBar;
+export default connect(mapStateToProps,mapDispatchToProps)(NavBar);

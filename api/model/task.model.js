@@ -86,6 +86,7 @@ taskSchema.statics.updateTask = function(task) {
       })
       .then(result => {
 
+        if(result){
           Object.keys(task).forEach(element => {
               result[element] = task[element];
           });
@@ -102,7 +103,14 @@ taskSchema.statics.updateTask = function(task) {
           .catch(err => {
             reject(err);
           });
-      });
+        }
+        else{
+          reject("No task found with this id");
+        }
+      })
+      .catch((err)=>{
+        reject(err);
+      })
 })};
 
 taskSchema.statics.deleteTask = function(task) {

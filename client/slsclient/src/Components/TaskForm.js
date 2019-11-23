@@ -109,8 +109,8 @@ export class TaskForm extends Component {
   renderContent() {
     return (
       
-      <div class="row">
-        <div class = "col-lg-3">
+      <div className="row">
+        <div className = "col-lg-3">
           <div id="addTaskForm" className="form-group">
             <div className="panel panel-default">
               <FormErrors formErrors={this.state.formErrors} />

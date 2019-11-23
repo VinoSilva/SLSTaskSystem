@@ -32,6 +32,7 @@ exports.updateTask = function(req, res) {
             task: {
                 name: result.name,
                 description: result.description,
+                status: result.status,
                 _id: result._id
             }
         });
@@ -74,7 +75,8 @@ exports.findTask = function(req,res){
                 task: {
                     name: result.name,
                     description: result.description,
-                    _id: result._id
+                    _id: result._id,
+                    status: result.status
                 }
             });
         }

@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import {getPageBegin} from "../actions/taskPageAction";
 
-
-
 function mapStateToProps(state){
     return {
         currentPage: state.taskReducer.currentPage,
@@ -20,15 +18,9 @@ export class TaskPage extends Component {
   }
 
   changePage(newPage){
-
-      // let dispatchData = changePage();
-
-      // dispatchData.payload = {};
-      
-      // dispatchData.payload.currentPage = newPage;
-
-      this.props.dispatch(getPageBegin(newPage));
-
+      if(this.props.currentPage !== newPage){
+        this.props.dispatch(getPageBegin(newPage));
+      }
   }
 
   range(start, end, step = 1) {

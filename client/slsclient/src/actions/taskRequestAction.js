@@ -24,7 +24,6 @@ export const fetchTaskFailure = (error) => ({
     payload: error
 });
 
-
 export const deleteTaskBegin = () => ({
     type: DELETE_TASK_BEGIN
 });
@@ -38,15 +37,3 @@ export const deleteTaskFailure = (error) => ({
     payload: error
 });
 
-export const updateTaskBegin = () => ({
-    type: UPDATE_TASK_BEGIN
-})
-
-export const updateTaskSuccess = () => ({
-    type: UPDATE_TASK_SUCCESS
-})
-
-export const updateTaskFailure = (error) => ({
-    type: UPDATE_TASK_FAILURE,
-    payload: error
-})

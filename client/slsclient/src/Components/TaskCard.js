@@ -11,11 +11,11 @@ export class TaskCard extends Component {
     super(props);
 
     var styleArray = [
-      "card border-primary mb-3",
-      "card border-secondary mb-3",
+      // "card border-primary mb-3",
+      // "card border-secondary mb-3",
       "card border-success mb-3",
       "card border-info mb-3",
-      "card border-dark mb-3"
+      // "card border-dark mb-3",
     ];
 
     let cardStyle = styleArray[this.getRandomInt(0, styleArray.length - 1)];
@@ -36,6 +36,7 @@ export class TaskCard extends Component {
 
   onClickEdit() {
     var path = `/task/${this.props._id}`;
+    // var path = `/task/${this.props.name}`;
 
     this.props.history.push(path, {
       _id: this.props._id,
@@ -45,11 +46,7 @@ export class TaskCard extends Component {
     });
   }
 
-  onClickDelete(){
-    if (window.confirm('Are you sure you wish to delete this task?')){
-        console.log('Delete this');
-    } 
-  }
+
 
   render() {
     return (

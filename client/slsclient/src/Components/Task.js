@@ -148,6 +148,7 @@ export class Task extends Component {
       <div className="container-fluid">
       <h1 className="list-inline-item" id="taskHeader">
         Task List
+        
         <button
           className="btn btn-info list-inline-item"
           id="addTaskBtn"
@@ -155,6 +156,7 @@ export class Task extends Component {
         >
           +
         </button>
+        
       </h1>
 
       <div id="taskList"></div>

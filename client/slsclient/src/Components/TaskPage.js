@@ -1,6 +1,29 @@
 import React, { Component } from 'react';
 
+import axios from 'axios';
+
 import Navbar from './NavBar';
+
+import { updateTask } from "../actions/taskUpdateAction";
+
+import { connect } from "react-redux";
+import Axios from 'axios';
+
+const mapDispatchToProps = dispatch => {
+    return {
+      onUpdateTask: task => {
+        dispatch(updateTask(task));
+      }
+    };
+};
+
+function mapStateToProps(state) {
+    return {
+      loading: state.taskUpdateReducer.loading,
+      error: state.taskUpdateReducer.error,
+      task: state.taskUpdateReducer.task
+    };
+}
 
 export class TaskPage extends Component {
 
@@ -15,59 +38,134 @@ export class TaskPage extends Component {
         this.onChange = this.onChange.bind(this);
         this.validateField = this.validateField.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.onClickDelete = this.onClickDelete.bind(this);
+
+        //Meaning users manually 
+        let name = undefined;
+        let status = undefined;
+        let description = undefined;
+        let initialized = false;
+        
+        if(this.props.location.state){
+            name =  this.props.location.state.name;
+            status = (this.props.location.state.status==="Completed" ||  this.props.location.state.status==="Done");
+            description = this.props.location.state.description;
+            initialized = true;
+        }
 
         this.state = {
             isEditing: false,
             previousValue: {
-                name: this.props.location.state.name,
-                status: (this.props.location.state.status==="Completed" ||  this.props.location.state.status==="Done"),
-                description: this.props.location.state.description,
+                name: name,
+                status: status,
+                description: description,
             },
             formErrors: {name: '',description: ''},
-            name: this.props.location.state.name,
-            status: (this.props.location.state.status==="Completed" ||  this.props.location.state.status==="Done"),
-            description: this.props.location.state.description,
+            name: name,
+            status: status,
+            description: description,
             _id: this.props.match.params.id,
             isUpdated: false,
             statusValid: false,
             descriptionValid: false,
             nameValid: false,
-            formValid: false
+            formValid: false,
+            initialized: initialized
         };
     }
 
     componentDidMount(){
 
-        let nameValid = this.state.nameValid;
-        let descriptionValid = this.state.descriptionValid;
 
-        nameValid = this.state.name.length > 0 && this.checkAllLetter(this.state.name);
-        descriptionValid = this.state.description.length > 0;
+        if(this.state.initialized){
+            let nameValid = this.state.nameValid;
+            let descriptionValid = this.state.descriptionValid;
+    
+            nameValid = this.state.name.length > 0 && this.checkAllLetter(this.state.name);
+            descriptionValid = this.state.description.length > 0;
+    
+            this.setState({
+                descriptionValid,
+                nameValid
+            });
+        }
+        else{
+            axios.post("http://localhost:4000/task/find",{_id: this.state._id})
+            .then((res)=>{
+                let task = res.data.task;
 
-        this.setState({
-            descriptionValid,
-            nameValid
-        });
+                let nameValid = this.state.nameValid;
+                let descriptionValid = this.state.descriptionValid;
+        
+                nameValid = task.name.length > 0 && this.checkAllLetter(task.name);
+                descriptionValid = task.description.length > 0;
+                
+
+                this.setState({
+                    name: task.name,
+                    description: task.description,
+                    status: (task.status==="Completed" ||  task.status==="Done"),
+                    previousValue: {
+                        name: task.name,
+                        description: task.description,
+                        status: (task.status ==="Completed" ||  task.status==="Done"),
+                    },
+                    initialized: true,
+                    nameValid,
+                    descriptionValid
+                });
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+        }
+    }
+
+    componentDidUpdate(){
+
+        if(this.props.task){
+
+            let isDiff = false;
+            isDiff = this.props.task.name !== this.state.previousValue.name;
+
+            isDiff = ((this.props.task.description !== this.state.previousValue.description) || isDiff);
+            let isCompleted = this.props.task.status ==="Completed";
+            
+            isDiff = ((isCompleted !== this.state.previousValue.status) || isDiff);
+
+            if(isDiff)
+            {
+                let previousValue = {
+                    name: this.props.task.name,
+                    description: this.props.task.description,
+                    status: (this.props.task.status==="Completed" ||  this.props.task.status==="Done")
+                }
+
+                this.setState({
+                    name: this.props.task.name,
+                    description: this.props.task.description,
+                    previousValue: previousValue,
+                    status: (this.props.task.status==="Completed" ||  this.props.task.status==="Done"),
+                    isEditing: false,
+                    isUpdated: false
+                });
+
+            }
+        }
+        
     }
 
     onChange(e){
 
         const name = e.target.name;
         
-        
         const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-
-        // if(e.target.type==='checkbox'){
-            
-        //     if(value){
-        //         console.log('Task set to Complete');
-        //     }
-        //     else{
-        //         console.log('Task set to In Progress');
-        //     }
-        // }
         
-        this.setState({[name]: value},()=>this.validateField(name,value));
+        this.setState({[name]: value},()=>{
+
+            this.validateField(name,value);
+            
+        });
     }
 
     checkAllLetter(value) {
@@ -124,11 +222,13 @@ export class TaskPage extends Component {
 
         let isDiff = false;
 
-        isDiff = ((this.state.previousValue.name !== this.state.name) | isDiff)
-        isDiff = ((this.state.previousValue.status !== this.state.status) | isDiff)
-        isDiff = ((this.state.previousValue.description !== this.state.description) | isDiff)
+        isDiff = ((this.state.previousValue.name !== this.state.name) || isDiff)
+        isDiff = ((this.state.previousValue.status !== this.state.status) || isDiff)
+        
+        isDiff = ((this.state.previousValue.description !== this.state.description) || isDiff)
         
         if(isDiff){
+
             this.setState({
                 isUpdated: true
             });        
@@ -167,6 +267,12 @@ export class TaskPage extends Component {
 
     }
 
+    onClickDelete(){
+        if (window.confirm('Are you sure you wish to delete this task?')){
+            console.log('Delete this');
+        } 
+    }
+
     renderTaskDetails(){
 
         return(
@@ -177,8 +283,9 @@ export class TaskPage extends Component {
 
                     <div className="jumbotron">
                         
-                        <h1 className="display-3">Task <span className="text-info">{this.state.name}</span></h1>
-                        
+                        {/* <h1 className="display-3">Task <span className="text-info">{this.state.name}</span></h1> */}
+
+                        <h1 className="display-3"> <span className="text-info">{this.state.name}</span></h1>
 
                         {/* <p className="lead">Created By: <span className="text-info"> Lee </span></p> */}
                         {/* <p className="lead">Created Date: <span className="text-success">20/1/2019</span> </p> */}
@@ -189,13 +296,14 @@ export class TaskPage extends Component {
 
                         <div className="custom-control custom-checkbox">
                                 <input readOnly name="status" type="checkbox" className="custom-control-input" id="customCheck1"  checked={this.state.status ? "checked" : "" }/>
-                                <label className="custom-control-label lead" htmlFor="customCheck1">Status</label>
+                                <label className="custom-control-label lead" htmlFor="customCheck1">Completed</label>
                         </div>
 
                         <br />
 
                         <button className="btn btn-info  btn-lg" role="button" onClick={this.onToggleEdit}>Edit</button>
                     
+                        <button className="btn btn-danger btn-lg" onClick={this.onClickDelete}>Delete</button>
                     </div>
 
                 </div>
@@ -220,7 +328,7 @@ export class TaskPage extends Component {
                                             <div className="col-lg-4">
                                                 <div className = {this.state.nameValid? "form-group has-success" : "form-group has-danger"}>
                                                     <label><h5>Name:</h5></label>
-                                                    <input  className= {this.state.nameValid ? "form-control is-valid" :"form-control is-invalid"}  value={this.state.name} onChange={this.onChange} type = "text" name = "name" placeholder={this.props.location.state.name}></input>
+                                                    <input  className= {this.state.nameValid ? "form-control is-valid" :"form-control is-invalid"}  defaultValue={this.state.name} onChange={this.onChange} type = "text" name = "name" placeholder={this.state.name}></input>
                                                 </div>
                                             </div>
                                         </div>
@@ -237,7 +345,7 @@ export class TaskPage extends Component {
 
                                         <div className = "row"> 
                                             <div className="col-lg-4">
-                                                <input  className= {this.state.descriptionValid ? "form-control is-valid" :"form-control is-invalid"} value={this.state.description} onChange={this.onChange} type = "text" name = "description" placeholder={this.props.location.state.description}></input>
+                                                <input  className= {this.state.descriptionValid ? "form-control is-valid" :"form-control is-invalid"} defaultValue={this.state.description} onChange={this.onChange} type = "text" name = "description" placeholder={this.state.description}></input>
                                             </div>
                                         </div>
                                     </div>
@@ -249,7 +357,7 @@ export class TaskPage extends Component {
 
                                         <div className="custom-control custom-checkbox">
                                             <input name="status" onChange={this.onChange} type="checkbox" className="custom-control-input" id="customCheck1"  checked={this.state.status ? "checked" : "" }/>
-                                            <label className="custom-control-label" htmlFor="customCheck1">Status</label>
+                                            <label className="custom-control-label" htmlFor="customCheck1">Completed</label>
                                         </div>
                                     </div>
 
@@ -280,10 +388,17 @@ export class TaskPage extends Component {
         let updateData = {
             name: this.state.name,
             status: this.state.status ? "Completed": "In Progress",
-            description: this.state.description
+            description: this.state.description,
+            _id: this.state._id
         };
 
-        console.log(JSON.stringify(updateData));
+        this.props.onUpdateTask(updateData);
+        // this.setState({
+        //     name: this.state.previousValue.name,
+        //     description: this.state.previousValue.description,
+        //     status: this.state.previousValue.status,
+        // },()=>{
+        // });
 
         e.preventDefault();
     }
@@ -313,20 +428,20 @@ export class TaskPage extends Component {
         else{
             return (
                 <div>
-                    <div class="spinner-grow text-dark" role="status">
-                        <span class="sr-only">Loading...</span>
+                    <div className="spinner-grow text-dark" role="status">
+                        <span className="sr-only">Loading...</span>
                     </div>
-                    <div class="spinner-grow text-dark" role="status">
-                        <span class="sr-only">Loading...</span>
+                    <div className="spinner-grow text-dark" role="status">
+                        <span className="sr-only">Loading...</span>
                     </div>
-                    <div class="spinner-grow text-dark" role="status">
-                        <span class="sr-only">Loading...</span>
+                    <div className="spinner-grow text-dark" role="status">
+                        <span className="sr-only">Loading...</span>
                     </div>
-                    <div class="spinner-grow text-dark" role="status">
-                        <span class="sr-only">Loading...</span>
+                    <div className="spinner-grow text-dark" role="status">
+                        <span className="sr-only">Loading...</span>
                     </div>
-                    <div class="spinner-grow text-dark" role="status">
-                        <span class="sr-only">Loading...</span>
+                    <div className="spinner-grow text-dark" role="status">
+                        <span className="sr-only">Loading...</span>
                     </div>
 
                 </div>
@@ -335,21 +450,54 @@ export class TaskPage extends Component {
 
     }
 
+    renderLoading(){
+        return (
+            <div>
+                <div className="spinner-grow text-dark" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+                <div className="spinner-grow text-dark" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+                <div className="spinner-grow text-dark" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+                <div className="spinner-grow text-dark" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+                <div className="spinner-grow text-dark" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+                <div className="spinner-grow text-dark" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+            </div>
+        )
+    }
+
     render() {
 
-        return (
+        
+        if(this.state.initialized){
+            return (
+                <div>
+                    <Navbar history={this.props.history} />
+    
+                    {this.props.isLoading ? this.renderLoading() : this.renderContent()}
+    
+                </div>
+            )
+        }
+        else{
+                return (
+                    <div>
+                        <Navbar history={this.props.history} />
 
-            <div>
-
-                <Navbar history={this.props.history} />
-
-                {this.renderContent()}
-
-            </div>
-
-        )
+                        {this.renderLoading()}
+                    </div>
+                )
+        }
     }
 }
 
-export default TaskPage
-
+export default connect(mapStateToProps,mapDispatchToProps)(TaskPage);

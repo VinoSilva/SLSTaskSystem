@@ -120,7 +120,7 @@ export class NavBar extends Component {
     return (
       <div>
 
-          <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+          <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             
             <Link to = "/" className="navbar-brand">Home</Link>
             {/* <a className="navbar-brand" href="#">Navbar</a>

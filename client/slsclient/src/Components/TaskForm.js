@@ -44,30 +44,6 @@ export class TaskForm extends Component {
             description: this.state.description
         };
 
-    //   let fetchData = {
-    //     method: "POST",
-    //     body: JSON.stringify(bodyData),
-    //     credentials: "include",
-    //     headers: {
-    //       "Content-Type": "application/json"
-    //     }
-    //   };
-
-    //   fetch("http://localhost:4000/task/", fetchData)
-    //     .then(res => {
-    //       if (res.status === 200) {
-    //         return res.json();
-    //       }
-    //     })
-    //     .then(data => {
-    //       if (data) {
-    //         console.log(JSON.stringify(data));
-    //       }
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //     });
-
         this.props.onAddTask(bodyData);
     }
 
@@ -132,40 +108,45 @@ export class TaskForm extends Component {
 
   renderContent() {
     return (
-      <div id="addTaskForm" className="form-group">
-        <div className="panel panel-default">
-          <FormErrors formErrors={this.state.formErrors} />
+      
+      <div class="row">
+        <div class = "col-lg-3">
+          <div id="addTaskForm" className="form-group">
+            <div className="panel panel-default">
+              <FormErrors formErrors={this.state.formErrors} />
+            </div>
+
+            <form onSubmit={this.onSubmit}>
+                <div className={this.state.nameValid ? "form-group has-success" : "form-group has-danger"} >
+                <label className="col-form-label">Task Name</label>
+                <input
+                  type="text"
+                  className= {this.state.nameValid ? "form-control is-valid" : "form-control is-invalid"}
+                  name="name"
+                  onChange={this.onChange}
+                />
+              </div>
+
+              <div className={this.state.descriptionValid ? "form-group has-success" : "form-group has-danger"}>
+                <label className="col-form-label">Task Description</label>
+                <textarea
+                  className={this.state.descriptionValid ? "form-control is-valid" : "form-control is-invalid"}
+                  name="description"
+                  rows="3"
+                  onChange={this.onChange}
+                ></textarea>
+              </div>
+
+              <br />
+
+              <button type="submit" className="btn btn-primary">
+                Create
+              </button>
+            </form>
+          </div>
         </div>
-
-        <form onSubmit={this.onSubmit}>
-          <div className="form-group">
-            <label className="col-form-label">Task Name</label>
-            <input
-              type="text"
-              className="form-control"
-              name="name"
-              onChange={this.onChange}
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="col-form-label">Description</label>
-            <textarea
-              className="form-control"
-              name="description"
-              rows="3"
-              onChange={this.onChange}
-            ></textarea>
-          </div>
-
-          <br />
-
-          <button type="submit" className="btn btn-primary">
-            {" "}
-            Create{" "}
-          </button>
-        </form>
       </div>
+      
     );
   }
 

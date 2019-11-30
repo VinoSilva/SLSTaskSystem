@@ -1,80 +1,36 @@
 var should = require("chai").should();
-const mongoose = require("mongoose");
+
+const Sequelize = require('sequelize');
 
 require("dotenv").config();
 
-let dropDatabase = function(done,callback) {
+//Make function to completely clean drop the database and recreate it
 
-  let dropAfterTest = true;
 
-  if(dropAfterTest)
-  {
-    mongoose.connection.db
-      .dropDatabase()
-      .then(() => {
-        if(callback){
-
-          callback();
-        }
-        else{
-          done();
-        }
-      })
-      .catch(err => {
-        console.error(err);
-  
-        if (err.code === 26) {
-          console.log("Ignore error mongoose 26");
-
-          if(callback){
-            callback();
-          }
-          else{
-            done();
-          }
-
-        } else {
-          throw err;
-        }
-      });
-  }
-  else{
-    //Don't drop the database
-
-    if(callback){
-      callback();
-    }
-    else{
-      done();
-    }
-  }
-};
-
-//Establish connection to mongoDB
+//Establish connection to mysql
 before(function(done) {
-  mongoose.Promise = global.Promise;
+   
+  const sequelize = new Sequelize(process.env.devdb,process.env.user,process.env.pass, {
+    host: "localhost",
+    dialect: "mysql",
+    pool: {
+      max: 5,
+      min: 0,
+      idle: 10000
+    }
+  }); 
 
-  let options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  };
-
-  mongoose.connect(process.env.test_url, options, () => {
-    let db = mongoose.connection;
-
-    db.on("error", error => {
-      console.error(console, error);
-    });
-
-    console.log("App connected to db:" + process.env.test_url);
-
-    this.dropDatabase = dropDatabase;
-
+  sequelize
+  .authenticate()
+  .then(function(){
+    this.sequelize = sequelize;
+    console.log('Successfully connected');
     done();
-  });
+  })
+
 });
 
-//Drop the database to cleanup previous data entries
-before(function(done) {
-  this.dropDatabase(done);
-});
+// //Drop the database to cleanup previous data entries
+// before(function(done) {
+
+// });

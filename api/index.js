@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 const cors = require("cors");
+const Sequelize = require('sequelize');
 
 const whitelist = ["http://localhost:3000"];
 
@@ -34,8 +34,27 @@ let options = {
     useUnifiedTopology: true 
 };
 
-mongoose.connect(process.env.test_url,options,()=>{
-    app.listen(process.env.port,()=>{
-        console.log('App is listening');
-    });
+const sequelize = new Sequelize(process.env.devdb,process.env.user,process.env.pass, {
+  host: "localhost",
+  dialect: "mysql",
+  pool: {
+    max: 5,
+    min: 0,
+    idle: 10000
+  }
+});
+
+sequelize
+.authenticate()
+.then(() => {
+  
+  console.log('Connection has been established successfully.');
+  
+  app.listen(process.env.port,()=>{
+      console.log('App is listening');
+  });
+  
+})
+.catch(err => {
+  console.error('Unable to connect to the database:', err);
 });

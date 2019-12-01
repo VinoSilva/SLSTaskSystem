@@ -6,6 +6,8 @@ const Sequelize = require('sequelize');
 
 const whitelist = ["http://localhost:3000"];
 
+var models = require('./model');
+
 const corsOptions = {
   origin: function(origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
@@ -34,27 +36,16 @@ let options = {
     useUnifiedTopology: true 
 };
 
-const sequelize = new Sequelize(process.env.devdb,process.env.user,process.env.pass, {
-  host: "localhost",
-  dialect: "mysql",
-  pool: {
-    max: 5,
-    min: 0,
-    idle: 10000
-  }
-});
-
-sequelize
-.authenticate()
-.then(() => {
+models.sequelize.sync()
+.then(function(){
   
   console.log('Connection has been established successfully.');
   
   app.listen(process.env.port,()=>{
       console.log('App is listening');
   });
-  
+
 })
-.catch(err => {
-  console.error('Unable to connect to the database:', err);
+.catch((err)=>{
+  console.log(err);
 });

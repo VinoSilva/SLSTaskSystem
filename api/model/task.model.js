@@ -2,22 +2,22 @@ module.exports = function(sequelize,DataTypes){
     
     var task = sequelize.define('task',{
         name: {
-          type:Sequelize.STRING,
+          type: DataTypes.STRING,
           allowNull: false,
           validate: {
             is: {
-              args: /^[a-z]+$/i,
-              msg: 'Only letters are allowed'
+              args: /^(?:[A-Za-z]+)(?:[A-Za-z0-9 _]*)$/,
+              msg: 'No special characters are allowed'
             },
             notEmpty: true,
           }
         },
         description: {
           allowNull: false,
-          type: Sequelize.TEXT
+          type: DataTypes.TEXT
         },
         status: {
-          type: Sequelize.STRING,
+          type: DataTypes.STRING,
           allowNull: false,
           validate: {
             isIn: 

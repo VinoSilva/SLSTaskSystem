@@ -10,36 +10,47 @@ function mapStateToProps(state){
 
 export class TaskLists extends Component {
 
-    renderTaskCards({tasks}){
 
-      if(tasks && tasks.length > 0){
+    constructor(props){
+
+      super(props);
+
+      this.renderTaskCards = this.renderTaskCards.bind(this);
+    }
+
+    renderTaskCards({rows}){
+
+        console.log(rows);
         
-        return (
-        <div className = "row">
-    
-          {tasks.map((task,i)=>{
-            
+        
+        if(rows && rows.length > 0){
             return (
-              <div key={task._id}>
-                <TaskCard history={this.props.history} status={task.status} _id = {task._id} status = {task.status} name = {task.name} description = {task.description} />
-              </div>
-            );
-          })}
-       
-        </div>);
-      }
-      else{
-        return (
-          <div>
-          </div>
-        )
-      }
+            <div className = "row">
+        
+              {rows.map((task,i)=>{
+                return (
+                  <div key={task.id}>
+                    <TaskCard history={this.props.history} status={task.status} id = {task.id} status = {task.status} name = {task.name} description = {task.description} />
+                  </div>
+                );
+              })}
+          
+            </div>);
+        }
+        else{
+          return (
+            <div>
+
+            </div>
+          );
+        }
     }
 
     render() {
+
         return (
             <div>
-                {this.renderTaskCards(this.props)}
+                {this.renderTaskCards(this.props.tasks)}
             </div>
         )
     }

@@ -64,7 +64,7 @@ export class TaskPage extends Component {
             name: name,
             status: status,
             description: description,
-            _id: this.props.match.params.id,
+            id: this.props.match.params.id,
             isUpdated: false,
             statusValid: false,
             descriptionValid: false,
@@ -90,7 +90,7 @@ export class TaskPage extends Component {
             });
         }
         else{
-            axios.post("http://localhost:4000/task/find",{_id: this.state._id})
+            axios.post("http://localhost:4000/task/find",{id: this.state.id})
             .then((res)=>{
                 let task = res.data.task;
 
@@ -389,7 +389,7 @@ export class TaskPage extends Component {
             name: this.state.name,
             status: this.state.status ? "Completed": "In Progress",
             description: this.state.description,
-            _id: this.state._id
+            id: this.state.id
         };
 
         this.props.onUpdateTask(updateData);

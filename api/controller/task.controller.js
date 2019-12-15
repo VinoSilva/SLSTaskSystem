@@ -5,6 +5,8 @@ exports.createTask = function(req, res) {
 
     let createData = req.body;
 
+    createData.status = "In Progress";
+
     models.task.create(createData)
     .then((task)=>{
         res.status(200).json({

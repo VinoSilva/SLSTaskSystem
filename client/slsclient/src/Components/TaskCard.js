@@ -35,11 +35,11 @@ export class TaskCard extends Component {
   }
 
   onClickEdit() {
-    var path = `/task/${this.props._id}`;
+    var path = `/task/${this.props.id}`;
     // var path = `/task/${this.props.name}`;
 
     this.props.history.push(path, {
-      _id: this.props._id,
+      id: this.props.id,
       name: this.props.name,
       description: this.props.description,
       status: this.props.status

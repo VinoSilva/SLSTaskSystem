@@ -8,6 +8,18 @@ var models = require('../model/');
 
 //Make function to completely clean drop the database and recreate it
 
+function ClearDB(callback){
+  models.sequelize.sync({force:true})
+  .then(function(){
+    console.log('Cleared DB');
+    
+    callback();
+  })
+  .catch((err)=>{
+    callback(err);
+  });
+}
+
 //Establish connection to mysql
 before(function(done) {
    
@@ -31,8 +43,13 @@ before(function(done) {
 
   models.sequelize.sync({force:true})
   .then(function(){
+
     console.log('Connection has been established successfully');
+
+    this.ClearDB = ClearDB;
+
     done();
+
   })
   .catch((err)=>{
     throw err;

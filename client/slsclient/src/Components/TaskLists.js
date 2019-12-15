@@ -11,6 +11,8 @@ function mapStateToProps(state){
 export class TaskLists extends Component {
 
     renderTaskCards({tasks}){
+
+      if(tasks && tasks.length > 0){
         
         return (
         <div className = "row">
@@ -25,6 +27,13 @@ export class TaskLists extends Component {
           })}
        
         </div>);
+      }
+      else{
+        return (
+          <div>
+          </div>
+        )
+      }
     }
 
     render() {

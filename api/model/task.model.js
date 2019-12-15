@@ -31,5 +31,12 @@ module.exports = function(sequelize,DataTypes){
 
     task.belongsTo(task,{as: 'parent'});
 
+    task.getAncestors = function(id){
+      return this.findAll({
+        where: {id: id},
+        raw: true
+      },{ include: [{ all: true, nested: true }]});
+    }
+
     return task;
 }

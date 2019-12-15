@@ -32,7 +32,7 @@ var sequelize = new Sequelize(dbName,process.env.user,process.env.pass,{
         min: 0,
         idle: 10000
     },
-    // logging: false
+    logging: false
 });
 
 

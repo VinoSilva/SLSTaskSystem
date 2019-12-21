@@ -4,9 +4,19 @@ const bodyParser = require('body-parser');
 const cors = require("cors");
 const Sequelize = require('sequelize');
 
+const http = require('http');
+
 const whitelist = ["http://localhost:3000"];
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 var models = require('./model');
+
+// const socketIO = require('socket.io');
+
+const fs = require('fs');
+
+const realtime = require('./utilities/realtime');
 
 const corsOptions = {
   origin: function(origin, callback) {
@@ -16,7 +26,6 @@ const corsOptions = {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  // credentials: true
 };
 
 app.use(cors(corsOptions));
@@ -36,12 +45,19 @@ let options = {
     useUnifiedTopology: true 
 };
 
+const server = http.createServer({
+  requestCert: false,
+  rejectUnauthorized: false
+},app);
+
+realtime.connect(server);
+
 models.sequelize.sync()
 .then(function(){
   
   console.log('Connection has been established successfully.');
   
-  app.listen(process.env.port,()=>{
+  server.listen(process.env.port,()=>{
       console.log('App is listening');
   });
 

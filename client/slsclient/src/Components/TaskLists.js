@@ -20,9 +20,6 @@ export class TaskLists extends Component {
 
     renderTaskCards({rows}){
 
-        console.log(rows);
-        
-        
         if(rows && rows.length > 0){
             return (
             <div className = "row">

@@ -7,7 +7,8 @@ import Navbar from './NavBar';
 import { updateTask } from "../actions/taskUpdateAction";
 
 import { connect } from "react-redux";
-import Axios from 'axios';
+
+import socketIOClient from 'socket.io-client';
 
 const mapDispatchToProps = dispatch => {
     return {
@@ -32,9 +33,6 @@ export class TaskPage extends Component {
         super(props);
 
         this.onToggleEdit = this.onToggleEdit.bind(this);
-        this.renderTaskDetails = this.renderTaskDetails.bind(this);
-        this.renderUpdateForm = this.renderUpdateForm.bind(this);
-        this.renderContent = this.renderContent.bind(this);
         this.onChange = this.onChange.bind(this);
         this.validateField = this.validateField.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -70,12 +68,13 @@ export class TaskPage extends Component {
             descriptionValid: false,
             nameValid: false,
             formValid: false,
-            initialized: initialized
+            initialized: initialized,
+            endpoint: 'http://localhost:4000',
+            socket: undefined //Place in redux store
         };
     }
 
     componentDidMount(){
-
 
         if(this.state.initialized){
             let nameValid = this.state.nameValid;
@@ -83,36 +82,46 @@ export class TaskPage extends Component {
     
             nameValid = this.state.name.length > 0 && this.checkAllLetter(this.state.name);
             descriptionValid = this.state.description.length > 0;
-    
+            
+            // if(!socket)
+            // {
+            //     socket = ;
+            // }
+
+            var socketVal = this.state.socket !== undefined ? this.state.socket :  socketIOClient(this.state.endpoint,{rejectUnauthorized: false});
+            
             this.setState({
                 descriptionValid,
-                nameValid
+                nameValid,
+                socket: socketVal
             });
         }
         else{
             axios.post("http://localhost:4000/task/find",{id: this.state.id})
             .then((res)=>{
                 let task = res.data.task;
-
+                
                 let nameValid = this.state.nameValid;
                 let descriptionValid = this.state.descriptionValid;
-        
+                
                 nameValid = task.name.length > 0 && this.checkAllLetter(task.name);
                 descriptionValid = task.description.length > 0;
                 
+                var socketVal = this.state.socket !== undefined ? this.state.socket :  socketIOClient(this.state.endpoint,{rejectUnauthorized: false});
 
                 this.setState({
                     name: task.name,
                     description: task.description,
-                    status: (task.status==="Completed" ||  task.status==="Done"),
+                    status: (task.status === "Completed" ||  task.status === "Done"),
                     previousValue: {
                         name: task.name,
                         description: task.description,
-                        status: (task.status ==="Completed" ||  task.status==="Done"),
+                        status: (task.status === "Completed" ||  task.status === "Done"),
                     },
                     initialized: true,
                     nameValid,
-                    descriptionValid
+                    descriptionValid,
+                    socket: socketVal
                 });
             })
             .catch((err)=>{
@@ -183,7 +192,6 @@ export class TaskPage extends Component {
         let fieldValidationErrors = this.state.formErrors;
         let nameValid = this.state.nameValid;
         let descriptionValid = this.state.descriptionValid;
-        let statusValid = this.state.statusValid;
 
         switch (fieldName){
             case 'name':
@@ -193,6 +201,8 @@ export class TaskPage extends Component {
             case 'description':
                 descriptionValid = value.length > 0;
                 fieldValidationErrors.description = descriptionValid ? "" : " is invalid";
+            break;
+            default:
             break;
         }
 
@@ -254,9 +264,6 @@ export class TaskPage extends Component {
             });
         }
         else{
-
-            //log exiting the edit mode
-            //Restore the snapshot
             this.setState({
                 isEditing: !this.state.isEditing,
                 name: this.state.previousValue.name,
@@ -282,13 +289,8 @@ export class TaskPage extends Component {
                 <div className="container-fluid">
 
                     <div className="jumbotron">
-                        
-                        {/* <h1 className="display-3">Task <span className="text-info">{this.state.name}</span></h1> */}
 
                         <h1 className="display-3"> <span className="text-info">{this.state.name}</span></h1>
-
-                        {/* <p className="lead">Created By: <span className="text-info"> Lee </span></p> */}
-                        {/* <p className="lead">Created Date: <span className="text-success">20/1/2019</span> </p> */}
 
                         <p className="lead">
                             Description:{this.state.description}
@@ -301,7 +303,7 @@ export class TaskPage extends Component {
 
                         <br />
 
-                        <button className="btn btn-info  btn-lg" role="button" onClick={this.onToggleEdit}>Edit</button>
+                        <button className="btn btn-info  btn-lg" onClick={this.onToggleEdit}>Edit</button>
                     
                         <button className="btn btn-danger btn-lg" onClick={this.onClickDelete}>Delete</button>
                     </div>
@@ -365,11 +367,11 @@ export class TaskPage extends Component {
 
                                     <fieldset className = "form-group">
                                         {this.state.isUpdated && this.state.formValid && 
-                                            <input type="submit" className="btn btn-success btn-lg" role="button" value="Update" />
+                                            <input type="submit" className="btn btn-success btn-lg" value="Update" />
                                         }
                                         
                                         {!this.props.loading &&
-                                            <button onClick={this.onToggleEdit} className="btn btn-danger btn-lg" role="button">Cancel</button>
+                                            <button onClick={this.onToggleEdit} className="btn btn-danger btn-lg">Cancel</button>
                                         }
                                     </fieldset>
 
@@ -428,26 +430,10 @@ export class TaskPage extends Component {
         else{
             return (
                 <div>
-                    <div className="spinner-grow text-dark" role="status">
-                        <span className="sr-only">Loading...</span>
-                    </div>
-                    <div className="spinner-grow text-dark" role="status">
-                        <span className="sr-only">Loading...</span>
-                    </div>
-                    <div className="spinner-grow text-dark" role="status">
-                        <span className="sr-only">Loading...</span>
-                    </div>
-                    <div className="spinner-grow text-dark" role="status">
-                        <span className="sr-only">Loading...</span>
-                    </div>
-                    <div className="spinner-grow text-dark" role="status">
-                        <span className="sr-only">Loading...</span>
-                    </div>
-
+                    {this.renderLoading()}
                 </div>
             )
         }
-
     }
 
     renderLoading(){

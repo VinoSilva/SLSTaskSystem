@@ -69,30 +69,35 @@ export class TaskPage extends Component {
             nameValid: false,
             formValid: false,
             initialized: initialized,
-            endpoint: 'http://localhost:4000'
+            isChanged: false
         };
     }
 
     onTaskModified(data){
+
         console.log(JSON.stringify(data));
+        
+        let isChanged = false;
 
         if(this.state.isEditing){
             console.log("Notify the player that the task has been edited");
+            isChanged = true;
         }
         else if(!this.state.isLoading){
             console.log('Change data');
-
-            this.setState({
-                name: data.name,
-                description: data.description,
-                status: data.status,
-                previousValue: {
-                    name: data.name,
-                    status: data.status,
-                    description: data.description
-                }
-            })
         }
+        
+        this.setState({
+            name: data.name,
+            description: data.description,
+            status: data.status,
+            previousValue: {
+                name: data.name,
+                status: data.status,
+                description: data.description
+            },
+            isChanged
+        });
     }
 
     componentWillUnmount(){
@@ -292,6 +297,7 @@ export class TaskPage extends Component {
                 name: this.state.previousValue.name,
                 status: this.state.previousValue.status,
                 description: this.state.previousValue.description,
+                isChanged: true
             });
         }
 
@@ -346,6 +352,9 @@ export class TaskPage extends Component {
                         <form onSubmit={this.onSubmit}>
 
                                 <fieldset>
+
+                                    {this.state.isChanged === true ? <p className = "text-danger">Task was just edited by someone else.</p> : <div></div>}
+
                                     {/* <div className = "jumbotron"> */}
                                         
                                         <div className = "row"> 

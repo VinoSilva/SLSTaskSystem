@@ -2,7 +2,6 @@ let connection = null;
 
 const socketIO = require('socket.io');
 
-
 class Realtime{
     constructor(){
         this._socket = null;
@@ -19,10 +18,10 @@ class Realtime{
             this._socket = socket;
 
             this._socket.on('disconnect',function(){
-                console.log(socket.id,"(Disconnected)");
+                // console.log(socket.id,"(Disconnected)");
             });
             
-            console.log(`New socket connection: ${socket.id}`);
+            // console.log(`New socket connection: ${socket.id}`);
         });
     }
 

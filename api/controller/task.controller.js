@@ -1,6 +1,8 @@
 var models = require('../model/index');
 
 
+const realtime = require('../utilities/realtime');
+
 exports.createTask = function(req, res) {
 
     let createData = req.body;
@@ -40,9 +42,15 @@ exports.updateTask = function(req, res) {
         task.save()
         .then((updatedTask)=>{
             let plain = updatedTask.get({plain: true});
+
+            realtime.connection().sendEvent(plain.id,{
+                name: plain.name,
+                description: plain.description,
+                status: plain.status 
+            });
             
             res.status(200).json({
-                success: "Successfully created task",
+                success: "Successfully updated task",
                 task: plain
             });
         })

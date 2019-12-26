@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { showAddTask, hideAddTask } from "../actions/taskAddAction";
-import { getPageSuccess } from '../actions/taskPageAction';
 
 import TaskForm from "./TaskForm";
 import TaskPaginate from './TaskPaginate';
 import TaskLists from './TaskLists';
 
+import { getPageSuccess } from '../actions/taskPageAction';
+import { showAddTask, hideAddTask } from "../actions/taskAddAction";
 import {getTaskPage} from '../actions/taskPageAction';
+import { createSocket } from "../actions/socketCreateAction";
 
 const mapDispatchToProps = dispatch => {
   return {
@@ -19,6 +20,10 @@ const mapDispatchToProps = dispatch => {
     },
     hideAddTask: () => {
       dispatch(hideAddTask());
+    },
+    onCreateSocket: () => {
+
+      dispatch(createSocket());
     }
   }
 }
@@ -31,7 +36,9 @@ function mapStateToProps(state) {
     count: state.taskReducer.count,
     tasks: state.taskReducer.tasks,
     loading: state.taskReducer.loading,
-    error: state.taskReducer.error
+    socketLoading: state.socketCreateReducer.loading,
+    error: state.taskReducer.error,
+    socket: state.socketCreateReducer.socket
   };
 }
 
@@ -47,6 +54,11 @@ export class Task extends Component {
       currentPage: -1
     };
 
+
+  }
+
+  componentWillMount(){
+    this.props.onCreateSocket();
   }
 
   onClickAddTask() {
@@ -195,7 +207,7 @@ export class Task extends Component {
 
     return (
       <div>
-        {this.props.loading ? this.renderLoading() : this.renderContent()}
+        {(!this.props.loading && !this.props.socketLoading) ?  this.renderContent() : this.renderLoading() }
       </div>
     );
   }

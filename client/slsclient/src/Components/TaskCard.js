@@ -1,5 +1,26 @@
 import React, { Component } from "react";
 
+import {createSocket} from "../actions/socketCreateAction";
+
+import { connect } from "react-redux";
+
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onCreateSocket: socket => {
+      dispatch(createSocket(socket));
+    }  
+  }
+};
+
+function mapStateToProps(state) {
+  return {
+    loading: state.socketCreateReducer.loading,
+    error: state.socketCreateReducer.error,
+    socket: state.socketCreateReducer.socket
+  };
+}
+
 export class TaskCard extends Component {
   getRandomInt(minIndex, maxIndex) {
     minIndex = Math.ceil(minIndex);
@@ -11,23 +32,50 @@ export class TaskCard extends Component {
     super(props);
 
     var styleArray = [
-      // "card border-primary mb-3",
-      // "card border-secondary mb-3",
       "card border-success mb-3",
       "card border-info mb-3",
-      // "card border-dark mb-3",
     ];
 
     let cardStyle = styleArray[this.getRandomInt(0, styleArray.length - 1)];
 
     this.state = {
-      cardStyle
+      cardStyle,
+      description: this.props.description,
+      name: this.props.name,
+      status: this.props.status
     };
 
     this.onChange = this.onChange.bind(this);
     this.onClickEdit = this.onClickEdit.bind(this);
 
+  }
+
+  componentDidMount(){
+  
+    // console.log('Listen to id:' + this.props.id);
+
+    this.props.socket.on(this.props.id,(data)=>{this.onTaskModified(data)});
+  
+  }
+
+  componentWillUnmount(){
     
+    // console.log('Stop listening to event:' + this.props.id);
+
+    this.props.socket.off(this.props.id);
+
+  }
+
+  onTaskModified(data){
+
+    this.setState({
+      name: data.name,
+      description: data.description,
+      status: data.status
+    },()=>{
+      console.log('Name:' + this.state.name);
+    });
+
   }
 
   onChange(e) {
@@ -35,6 +83,7 @@ export class TaskCard extends Component {
   }
 
   onClickEdit() {
+
     var path = `/task/${this.props.id}`;
     // var path = `/task/${this.props.name}`;
 
@@ -44,41 +93,24 @@ export class TaskCard extends Component {
       description: this.props.description,
       status: this.props.status
     });
+
   }
-
-
 
   render() {
     return (
       <div className={this.state.cardStyle} style={{ maxWidth: 250 }}>
         <div className="card-header">
 
-          {
-           /* <div className="form-group">
-                <input type="checkbox" className="" id="customSwitch1" onChange={this.onChange} />
-            </div> */
-          }
-
-          <a href="#" onClick={this.onClickEdit} className="text-info"> {this.props.name} </a>
-          {/* <h6>{this.props.name}</h6> */}
+          <a href="#" onClick={this.onClickEdit} className="text-info"> {this.state.name} </a>
         </div>
 
         <div className="card-body">
-          {/* <h4 className="card-title">Info card title</h4> */}
 
-          <p className="card-text">{this.props.description}</p>
+          <p className="card-text">{this.state.description}</p>
         </div>
-          {/* <Link to = {`/task/${this.props._id}`} className="btn btn-success">Edit</Link> */}
-        {/* <div>
-
-          <button className="btn btn-success" onClick={this.onClickEdit}>
-            Edit
-          </button>
-          <button className="btn btn-danger" onClick={this.onClickDelete}>Delete</button>
-        </div> */}
       </div>
     );
   }
 }
 
-export default TaskCard;
+export default connect(mapStateToProps,mapDispatchToProps)(TaskCard);

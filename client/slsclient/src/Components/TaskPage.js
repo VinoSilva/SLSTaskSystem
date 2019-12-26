@@ -8,8 +8,6 @@ import { updateTask } from "../actions/taskUpdateAction";
 
 import { connect } from "react-redux";
 
-import socketIOClient from 'socket.io-client';
-
 const mapDispatchToProps = dispatch => {
     return {
       onUpdateTask: task => {
@@ -69,8 +67,7 @@ export class TaskPage extends Component {
             nameValid: false,
             formValid: false,
             initialized: initialized,
-            endpoint: 'http://localhost:4000',
-            socket: undefined //Place in redux store
+            endpoint: 'http://localhost:4000'
         };
     }
 
@@ -83,17 +80,9 @@ export class TaskPage extends Component {
             nameValid = this.state.name.length > 0 && this.checkAllLetter(this.state.name);
             descriptionValid = this.state.description.length > 0;
             
-            // if(!socket)
-            // {
-            //     socket = ;
-            // }
-
-            var socketVal = this.state.socket !== undefined ? this.state.socket :  socketIOClient(this.state.endpoint,{rejectUnauthorized: false});
-            
             this.setState({
                 descriptionValid,
                 nameValid,
-                socket: socketVal
             });
         }
         else{
@@ -107,7 +96,6 @@ export class TaskPage extends Component {
                 nameValid = task.name.length > 0 && this.checkAllLetter(task.name);
                 descriptionValid = task.description.length > 0;
                 
-                var socketVal = this.state.socket !== undefined ? this.state.socket :  socketIOClient(this.state.endpoint,{rejectUnauthorized: false});
 
                 this.setState({
                     name: task.name,
@@ -120,8 +108,7 @@ export class TaskPage extends Component {
                     },
                     initialized: true,
                     nameValid,
-                    descriptionValid,
-                    socket: socketVal
+                    descriptionValid
                 });
             })
             .catch((err)=>{

@@ -7,6 +7,7 @@ import Navbar from './NavBar';
 import { updateTask } from "../actions/taskUpdateAction";
 
 import { connect } from "react-redux";
+import socketCreateReducer from '../reducers/socketCreateReducer';
 
 const mapDispatchToProps = dispatch => {
     return {
@@ -20,7 +21,8 @@ function mapStateToProps(state) {
     return {
       loading: state.taskUpdateReducer.loading,
       error: state.taskUpdateReducer.error,
-      task: state.taskUpdateReducer.task
+      task: state.taskUpdateReducer.task,
+      socket: state.socketCreateReducer.socket
     };
 }
 
@@ -71,6 +73,35 @@ export class TaskPage extends Component {
         };
     }
 
+    onTaskModified(data){
+        console.log(JSON.stringify(data));
+
+        if(this.state.isEditing){
+            console.log("Notify the player that the task has been edited");
+        }
+        else if(!this.state.isLoading){
+            console.log('Change data');
+
+            this.setState({
+                name: data.name,
+                description: data.description,
+                status: data.status,
+                previousValue: {
+                    name: data.name,
+                    status: data.status,
+                    description: data.description
+                }
+            })
+        }
+    }
+
+    componentWillUnmount(){
+
+        if(this.props.socket){
+            this.props.socket.off(this.state.id);
+        }
+    }
+
     componentDidMount(){
 
         if(this.state.initialized){
@@ -84,6 +115,8 @@ export class TaskPage extends Component {
                 descriptionValid,
                 nameValid,
             });
+
+            this.props.socket.on(this.state.id,(data)=>{this.onTaskModified(data);});
         }
         else{
             axios.post("http://localhost:4000/task/find",{id: this.state.id})
@@ -96,7 +129,10 @@ export class TaskPage extends Component {
                 nameValid = task.name.length > 0 && this.checkAllLetter(task.name);
                 descriptionValid = task.description.length > 0;
                 
-
+                if(this.props.socket){
+                    this.props.socket.on(this.state.id,(data)=>{this.onTaskModified(data);});
+                }
+                
                 this.setState({
                     name: task.name,
                     description: task.description,

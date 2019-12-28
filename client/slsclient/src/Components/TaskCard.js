@@ -4,14 +4,13 @@ import {createSocket} from "../actions/socketCreateAction";
 
 import { connect } from "react-redux";
 
-
-const mapDispatchToProps = dispatch => {
-  return {
-    onCreateSocket: socket => {
-      dispatch(createSocket(socket));
-    }  
-  }
-};
+// const mapDispatchToProps = dispatch => {
+//   return {
+//     onCreateSocket: socket => {
+//       dispatch(createSocket(socket));
+//     }  
+//   }
+// };
 
 function mapStateToProps(state) {
   return {
@@ -113,4 +112,6 @@ export class TaskCard extends Component {
   }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(TaskCard);
+// export default connect(mapStateToProps,mapDispatchToProps)(TaskCard);
+
+export default connect(mapStateToProps)(TaskCard);

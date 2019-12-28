@@ -20,11 +20,12 @@ const mapDispatchToProps = dispatch => {
     },
     hideAddTask: () => {
       dispatch(hideAddTask());
-    },
-    onCreateSocket: () => {
-
-      dispatch(createSocket());
     }
+    // ,
+    // onCreateSocket: () => {
+
+    //   dispatch(createSocket());
+    // }
   }
 }
 
@@ -58,7 +59,7 @@ export class Task extends Component {
   }
 
   componentWillMount(){
-    this.props.onCreateSocket();
+    // this.props.onCreateSocket();
   }
 
   onClickAddTask() {

@@ -1,40 +1,48 @@
-import React from 'react';
+import React, { Component } from "react";
 
-import thunk from 'redux-thunk';
+import { connect } from "react-redux";
 
-import { createStore,applyMiddleware } from 'redux';
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 
-import { Provider } from 'react-redux';
+import { createSocket } from "./actions/socketCreateAction";
 
-import { BrowserRouter,Switch, Route } from "react-router-dom";
+import Home from "./Components/Home";
+import TaskPage from "./Components/TaskPage";
+import PageNotFound from "./Components/PageNotFound";
 
-import rootReducer from './reducers/rootReducer'; 
+const mapDispatchToProps = dispatch => {
+  return {
+    onCreateSocket: socket => {
+      dispatch(createSocket(socket));
+    }
+  };
+};
 
-import Home from './Components/Home';
-import TaskPage from './Components/TaskPage';
-import PageNotFound from './Components/PageNotFound';
-
-const store = createStore(rootReducer,applyMiddleware(thunk));
-
-//Remove history,test-utils, and remove unnecessary npm
-
-function App() {
-  return (
-    <Provider store={store}>
-      <div className="App">
-        <BrowserRouter>
-           <Switch>
-
-             <Route exact path = "/" component = {Home} />
-             <Route exact path="/Task/:id" component = {TaskPage}/>
-
-             <Route path = "" component = {PageNotFound}/>
-
-           </Switch>
-        </BrowserRouter>
-      </div>
-    </Provider>
-  );
+function mapStateToProps(state){
+  return {
+    
+  }
 }
 
-export default App;
+export class App extends Component {
+  componentDidMount() {
+    this.props.onCreateSocket();
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <BrowserRouter>
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/Task/:id" component={TaskPage} />
+
+            <Route path="" component={PageNotFound} />
+          </Switch>
+        </BrowserRouter>
+      </div>
+    );
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
